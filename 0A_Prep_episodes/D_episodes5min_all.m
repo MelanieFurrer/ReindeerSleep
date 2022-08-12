@@ -89,7 +89,7 @@ for n=1:nfiles
         STD=horzcat(STD_0,STD_1,STD_2);
         art=horzcat(art_0,art_1,art_2);
 
-        [episodes(n).sleepdura, sleeph(n)]=ecountsleepL(STD);
+        [episodes(n).wakdura,episodes(n).nremdura,episodes(n).remdura,episodes(n).rumdura,episodes(n).baa]=ecountwnrr5min(STD);
         % [episodes(n).sleepdura, sleeph(n)]=ecountsleepL(STD)
         episodes(n).reindeer=filename(1:8);
         
@@ -98,9 +98,9 @@ for n=1:nfiles
         
 end
 
-cd('C:\Users\schlaf\Documents\reindeer\Data_Analysis_main_experiment\Results\episodes\all')
+cd(savepath)
 %save('episodes_sleep.mat','episodes','art_all','STD_all')
-save('episodes_sleep.mat','episodes','art_all','STD_all')
+save('episodes5min.mat','episodes','art_all','STD_all')
 
 % %%
 % 

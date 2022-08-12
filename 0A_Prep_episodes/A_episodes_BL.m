@@ -5,7 +5,7 @@ close all
 d='BL';
 path='D:\Work\reindeer\Analyse_mainexperiment\Data\';
 datapath=[path,'Mat_power_artcorr_scored_cut\SR_BL2'];
-savepath='C:\Users\schlaf\Documents\reindeer\Data_Analysis_main_experiment\Results\SWA_plots';
+savepath='C:\Users\schlaf\Documents\reindeer\Data_Analysis_main_experiment\Results\episodes\BL2';
 
 cd(datapath)
 filenames=dir('*power*.mat');
@@ -38,7 +38,7 @@ for n=1:nfiles
         
 end
 
-cd('C:\Users\schlaf\Documents\reindeer\Data_Analysis_main_experiment\Results\episodes\BL2')
+cd(savepath)
 save('episodes.mat','episodes','art_all','STD_all')
 
 
