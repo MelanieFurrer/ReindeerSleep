@@ -50,7 +50,7 @@ pBL2 <- ggplot(dfBL2, aes(x=rum_dur, y=nrem_dur, color=season)) +
   ylab("NREM sleep duration (min/24 h)")+
   xlab("rumination duration (min/24 h)")+
 
-  theme(text = element_text(size=16))+
+  theme(text = element_text(size=18))+
   scale_color_manual(values=c("#377eb8", "#4daf4a", "#ff7f00"))
 
 
