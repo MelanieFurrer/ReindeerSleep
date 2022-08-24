@@ -1,4 +1,4 @@
-#install.packages("tidyverse")
+install.packages("MuMIn")
 
 library("readxl")
 library(ggplot2)
@@ -8,6 +8,8 @@ library(lme4)
 library(lmerTest)
 library(tidyverse)
 library(gridExtra)
+library(MuMIn)
+
 
 setwd("C:/Users/schlaf/Documents/reindeer/Data_Analysis_main_experiment/excel_overview_data")
 
@@ -16,36 +18,24 @@ df$reindeer <- as.factor(df$reindeer)
 df$season <- as.factor(df$season)
 df$condition <- as.factor(df$condition)
 
-nrem_rum_dur <- df$nrem_dur + df$rum_dur*0.5
-df$nrem_rum_dur <- nrem_rum_dur
-
 
 dfBL2 <- df[ which(df$condition=='BL2'), ]
-dfBL1 <- df[ which(df$condition=='BL1'), ]
+#dfBL1 <- df[ which(df$condition=='BL1'), ]
 dfSD <- df[ which(df$condition=='SD'), ]
 dfSD1 <- df[ which(df$condition=='SD1'), ]
 dfSD2 <- df[ which(df$condition=='SD2'), ]
-dfHSP <- df[ which(df$condition=='HSP'), ]
-dfLSP <- df[ which(df$condition=='LSP'), ]
-dfSDA <- df[ which(df$condition=='SDA'), ]
-dfSDA2 <- df[ which(df$condition=='SDA2'), ]
-dfBLA <- df[ which(df$condition=='BLA'), ]
+#dfHSP <- df[ which(df$condition=='HSP'), ]
+#dfLSP <- df[ which(df$condition=='LSP'), ]
+#dfSDA <- df[ which(df$condition=='SDA'), ]
+#dfSDA2 <- df[ which(df$condition=='SDA2'), ]
+#dfBLA <- df[ which(df$condition=='BLA'), ]
 df2 <- df[ which(df$condition=='BL2' | df$condition=='SD'),]
-
-
-sd(dfBL2[ which(dfBL2$season=='Dec'), ]$nrem_rum_dur)
-sd(dfBL2[ which(dfBL2$season=='July'), ]$nrem_rum_dur)
-sd(dfBL2[ which(dfBL2$season=='Sep'), ]$nrem_rum_dur)
-
-sd(dfBL2[ which(dfBL2$season=='Dec'), ]$nrem_dur)
-sd(dfBL2[ which(dfBL2$season=='July'), ]$nrem_dur)
-sd(dfBL2[ which(dfBL2$season=='Sep'), ]$nrem_dur)
 
 
 
 ##### compare rum and nrem durations between SR and BL2 #########
 
-model1  <- lmer(rum_dur ~ condition + (1|season)  + (1|reindeer),df2)
+model1  <- lmer(nrem_dur ~ condition + (1|season)  + (1|reindeer),df2)
 summary(model1)
 
 
@@ -66,6 +56,7 @@ pBL2 <- ggplot(dfBL2, aes(x=rum_dur, y=nrem_dur, color=season)) +
 
 model1  <- lmer(nrem_dur ~ rum_dur + (1|season),dfBL2)
 summary(model1)
+r.squaredGLMM(model1)
 
 cor.test(dfBL2$nrem_dur,dfBL2$rum_dur)
 

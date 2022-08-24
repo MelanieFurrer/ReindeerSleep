@@ -9,6 +9,7 @@ library(lme4)
 library(lmerTest)
 library(tidyverse)
 library(gridExtra)
+library(emmeans)
 
 setwd("C:/Users/schlaf/Documents/reindeer/Data_Analysis_main_experiment/excel_overview_data")
 
@@ -28,9 +29,13 @@ df$SWA <- as.numeric(df$SWA)
 
 model1 <- lmer(SWA ~ ba * season * tp + (1|reindeer), df)
 model2 <- lmer(SWA ~ ba * season + (1|tp) + (1|reindeer), df)
+summary(model1)
 anova(model1)
 anova(model2)
 
+
+emmeans(model2, list(pairwise ~ ba*season), adjust = "tukey")
+contrast(model2, method = "pairwise", interaction = TRUE)
 
 
 
