@@ -5,7 +5,7 @@ close all
 
 path='D:\Work\reindeer\Analyse_mainexperiment\Data\';
 datapath=[path,'Mat_power_artcorr_scored_cut\SR_BL2'];
-savepath='C:\Users\schlaf\Documents\reindeer\Data_Analysis_main_experiment\Results\SWA_plots';
+savepath='C:\Users\schlaf\Documents\reindeer\Data_Analysis_main_experiment\Results\durationacross24h';
 
 cd(datapath)
 filenames=dir('*power*.mat');
@@ -23,11 +23,14 @@ for n=1:nfiles
         for i=1:nsegments
 
             vissymbsegment(i,:)=vissymb_cut(1+segmentlength*(i-1):segmentlength*i);
-        
+            
+            wake = find(vissymbsegment(i,:)=='w' | vissymbsegment(i,:)=='0');
             nrem = find(vissymbsegment(i,:)=='n' | vissymbsegment(i,:)=='2');
             nrem_rum = find(vissymbsegment(i,:)=='n' | vissymbsegment(i,:)=='2' | vissymbsegment(i,:)=='t' | vissymbsegment(i,:)=='4');
             rem = find(vissymbsegment(i,:)=='r' | vissymbsegment(i,:)=='3');
             rum = find(vissymbsegment(i,:)=='t' | vissymbsegment(i,:)=='4');
+            
+            length_wake(n,i)=length(wake)/15;
             length_nrem(n,i)=length(nrem)/15;
             length_nrem_rum(n,i)=length(nrem_rum)/15;
             length_rem(n,i)=length(rem)/15;
@@ -41,80 +44,72 @@ end
 
 segments = 16:39 % for 2h bits (5-5)
 
+length_wake_1h=length_wake(:,segments);
 length_sleep_1h=length_nrem_rum(:,segments)+length_rem(:,segments); % nrem, rum, rem
-% length_sleep_1h=length_nrem(:,segments); % nrem
+clear length_wake
 
 for i=1:12
-length_sleep(:,i)=mean(length_sleep_1h(:,i*2-1:i*2),2);
+    length_wake(:,i) = mean(length_wake_1h(:,i*2-1:i*2),2);
+    length_sleep(:,i) = mean(length_sleep_1h(:,i*2-1:i*2),2);
 end
 
-figure('units','normalized','outerposition',[0 0 1 0.5])
-      
 
-subplot(1,3,1)
+%% plot wake
+close all
+h1=figure  
 
-% plot(median(length_sleep([1 4 9],:)),'-ko','MarkerFaceColor','k')
-% hold on
-errorbar(mean(length_sleep([1 4 9],:)),std(length_sleep([1 4 9],:)),'k')
+subplot(131)
+
+errorbar(mean(length_wake([1 4 9],:)),std(length_wake([1 4 9],:)),'-s','MarkerSize',4,...
+    'MarkerEdgeColor','k','MarkerFaceColor','k','Color','k')
 ax = gca
 ax.FontSize = 12;
-title('December','FontSize',20)
-ylim([0,50])
+% title('December','FontSize',20)
+ylim([10,60])
 xlim([0,13])
-ylabel('sleep (min/h)','FontSize',16)
+%ylabel('sleep (min/h)','FontSize',16)
 xticks([1:13])
 xticklabels({'6','','','12','','','18','','','00','','','6'}) 
-%xticklabels({'6','','','','','','12','','','','','','18','','','','','','00','','','','','','6'}) 
-% for n=[1 4 9]   
-%     plot(length_sleep(n,segments),'--o')     
-%     hold on
-% end
+xlabel('clock time','FontSize',14)
+ hold on
+ plot(mean(length_wake([1 4 9],:)),'k','LineWidth',1)
+ 
+ 
+subplot(132)
 
-
-
-subplot(1,3,2)
-
-% plot(median(length_sleep([2 5 7 10],:)),'-ko','MarkerFaceColor','k')
-% hold on
-errorbar(mean(length_sleep([2 5 7 10],:)),std(length_sleep([2 5 7 10],:)),'k')
+errorbar(mean(length_wake([2 5 7 10],:)),std(length_wake([2 5 7 10],:)),'-s','MarkerSize',4,...
+    'MarkerEdgeColor','k','MarkerFaceColor','k','Color','k')
 ax = gca
 ax.FontSize = 12;
-title('July','FontSize',20)
-ylim([0,50])
+% title('July','FontSize',20)
+ylim([10,60])
 xlim([0,13])
-ylabel('sleep (min/h)','FontSize',16)
+%ylabel('sleep (min/h)','FontSize',16)
 xticks([1:13])
 xticklabels({'6','','','12','','','18','','','00','','','6'}) 
-%xticklabels({'6','','','','','','12','','','','','','18','','','','','','00','','','','','','6'}) 
-    
-% for n=[2 5 10 7]   
-%     plot(length_sleep(n,segments),'--o')
-%     hold on
-% end
+xlabel('clock time','FontSize',14)
+set(gca,'yticklabel',{[]})
+ hold on
+ plot(mean(length_wake([2 5 7 10],:)),'k','LineWidth',1)
 
+subplot(133)
 
-
-
-subplot(1,3,3)
-
-% plot(median(length_sleep([3 6 8 11],:)),'-ko','MarkerFaceColor','k')
-% hold on
-errorbar(mean(length_sleep([3 6 8 11],:)),std(length_sleep([3 6 8 11],:)),'k')
+errorbar(mean(length_wake([3 6 8 11],:)),std(length_wake([3 6 8 11],:)),'-s','MarkerSize',4,...
+    'MarkerEdgeColor','k','MarkerFaceColor','k','Color','k')
 ax = gca
 ax.FontSize = 12;
-title('September','FontSize',20)
-ylim([0,50])
+% title('September','FontSize',20)
+ylim([10,60])
 xlim([0,13])
-ylabel('sleep (min/h)','FontSize',16)
+%ylabel('sleep (min/h)','FontSize',16)
+xlabel('clock time','FontSize',14)
 xticks([1:13])
 xticklabels({'6','','','12','','','18','','','00','','','6'}) 
-%xticklabels({'6','','','','','','12','','','','','','18','','','','','','00','','','','','','6'}) 
-    
-% for n=[3 6 11 8]   
-%     plot(length_sleep(n,segments),'--o')
-%     hold on
-% end
-
+set(gca,'yticklabel',{[]})
+ hold on
+ plot(mean(length_wake([3 6 8 11],:)),'k','LineWidth',1)
+ 
+ 
 %% plot all seasons in one plot in different colours
 
 h2=figure    
@@ -232,7 +227,7 @@ set(gca,'yticklabel',{[]})
   %% save
   
 cd(savepath)
-print(['sleep_course_per2h_BL2'],'-dpng','-r500')
-print(h2,['sleep_course_per2h_BL2_allseasons'],'-dpng','-r500')
+
+print(h1,['wake_course_per2h_BL2_allseasons'],'-dpng','-r500')
 close all  
 

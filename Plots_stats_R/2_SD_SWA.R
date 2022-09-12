@@ -1,0 +1,60 @@
+
+library("readxl")
+library(ggplot2)
+library(NlinTS)
+library(dplyr)
+library(lme4)
+library(lmerTest)
+library(tidyverse)
+library(gridExtra)
+library("emmeans")
+
+setwd("C:/Users/schlaf/Documents/reindeer/Data_Analysis_main_experiment/excel_overview_data")
+
+df <- read_excel("SWA_SR_per2H.xlsx")
+df$reindeer <- as.factor(df$reindeer)
+df$season <- as.factor(df$season)
+df$timepoint <- as.factor(df$timepoint)
+df$timewindow <- as.factor(df$timewindow)
+
+model0 <- lmer(SWA ~ timewindow * season * timepoint + (1|reindeer), df)
+anova(model0)
+
+model1 <- lmer(SWA ~ timewindow + (1|season) + (1|reindeer) + (1|timepoint), df)
+summary(model1)
+anova(model1)
+
+emmeans(model1, pairwise ~ timewindow, adjust = "tukey")
+
+
+model2 <- lmer(SWA ~ timewindow * season + (1|timepoint) + (1|reindeer), df)
+anova(model2)
+emmeans(model2, pairwise ~ timewindow, adjust = "tukey")
+
+
+gd <- df %>% 
+  group_by(interaction (season, timewindow)) %>% 
+  summarise(meanSWA = mean(SWA), seSWA = sd(SWA))
+gd$timewindow <- c(1,1,1,2,2,2,3,3,3,4,4,4)
+gd$season <- c('December','July','September','December','July','September','December','July','September','December','July','September')
+
+gd$timewindow <- as.factor(gd$timewindow)
+
+setwd("C:/Users/schlaf/Documents/reindeer/Data_Analysis_main_experiment/Results/SleepRestriction")
+tiff("SR_boxplot_meanseasonstimepoint_3h.png", units="in", width=6, height=5, res=300)
+
+ggplot(gd, aes(x=timewindow, y=meanSWA)) +
+  geom_point( aes(x=timewindow, y=meanSWA, color=season), size=4)+
+  geom_errorbar( aes(ymin=meanSWA-seSWA, ymax=meanSWA+seSWA, group=season, color=season), size=1, width = 0.1)+
+  geom_line(data=subset(gd, timewindow== 1 | timewindow== 2), aes(x=timewindow, y=meanSWA, group=season, color=season), size=1, linetype=2) +
+  geom_line(data=subset(gd, timewindow== 2 | timewindow== 3 | timewindow== 4), aes(x=timewindow, y=meanSWA, group=season, color=season), size=1, linetype=1) +
+  theme_bw()+
+  theme(text = element_text(size=20),axis.text.x = element_text(size=20),legend.position = "none")+
+  scale_x_discrete(labels= c("-2 to 0","0 to +2","+2 to +4", "+4 to +6"))+
+  xlab("time (h) from short sleep deprivation (SD)")+
+  ylab("SWA relative to baselie")+
+  ylim(0.4, 2.2)+
+  scale_color_manual(values=c("#377eb8", "#4daf4a", "#ff7f00"))
+
+
+dev.off()

@@ -109,13 +109,25 @@ ggplot(df , aes(x=season, y=DeltaMSE_RumDecreaseS)) +
 
 
 
+####### plot diff. mean standard error for rum decreases S ############
+
 ggplot(df , aes(x=x, y=DeltaMSE_RumDecreaseS)) +
   geom_violin(fill = "grey90")+
   geom_jitter(height = 0, width = 0.19,size = 5)+
   theme_bw()+
   theme(text = element_text(size=20))+
   ylab("Diff. mean standard error")+
-  ylim(-0.0044,0.001)
+  ylim(-0.005,0.005)
+
+
+ggplot(df , aes(x=x, y=DeltaMSE_RumDecreaseS)) +
+  geom_violin(fill = "grey90")+
+  geom_jitter(height = 0, width = 0,size = 1.5)+
+  theme_bw()+
+  theme(text = element_text(size=20))+
+  ylab("Diff. mean standard error")+
+  ylim(-0.0045,0.0015)
+
 
 #draw_quantiles = c(0.25, 0.5, 0.75),
 

@@ -107,6 +107,12 @@ seasonr(find(ismember(seasonr,[1 4 9]))) = 1;
 seasonr(find(ismember(seasonr,[2 5 7 10]))) = 2;
 seasonr(find(ismember(seasonr,[3 6 8 11]))) = 3;
 
+reindeer=season(r);
+reindeer(find(ismember(reindeer,[1 2 3]))) = 1;
+reindeer(find(ismember(reindeer,[4 5 6]))) = 2;
+reindeer(find(ismember(reindeer,[7 8]))) = 3;
+reindeer(find(ismember(reindeer,[9 10 11]))) = 4;
+
 for i=1:length(r)
     
     rumep = cell2mat(rumepochs(r(i)));
@@ -145,12 +151,36 @@ SWA_change = SWA_after - SWA_before;
     subplot(1,2,1)
 
     [h,p,ci,stats] = ttest(SWA_before,SWA_after)
-    for i=1:length(SWA_change)
+   for i=find(reindeer==2)
         
-        plot([1:2],[SWA_before(i),SWA_after(i)],'-o','Color', [0.4 0.4 0.4],'MarkerFaceColor', [0.8 0.8 0.8], 'MarkerEdgeColor', 'k')
+        plot([1:2],[SWA_before(i),SWA_after(i)],'-o','Color', [0.4471  0.5529  0.7098],'MarkerEdgeColor', 'k', 'MarkerFaceColor', [0.4471  0.5529  0.7098])
+        hold on
+
+   end
+    
+        
+   for i=find(reindeer==1)
+        
+        plot([1:2],[SWA_before(i),SWA_after(i)],'-o','Color', [0.7098  0.6667  0.5451],'MarkerEdgeColor', 'k', 'MarkerFaceColor', [0.7098  0.6667  0.5451])
+        hold on
+
+   end
+    
+    
+   for i=find(reindeer==4)
+        
+        plot([1:2],[SWA_before(i),SWA_after(i)],'-o','Color', [0.4745  0.6588 0.5843],'MarkerEdgeColor', 'k', 'MarkerFaceColor', [0.4745  0.6588 0.5843])
         hold on
         xlim([0.5 2.5])
-    end
+   end
+    
+    
+   for i=find(reindeer==3)
+        
+        plot([1:2],[SWA_before(i),SWA_after(i)],'-o','Color', [0.7020  0.5804  0.6824],'MarkerEdgeColor', 'k', 'MarkerFaceColor', [0.7020  0.5804  0.6824])
+        hold on
+
+   end
     
     
    
@@ -163,7 +193,7 @@ SWA_change = SWA_after - SWA_before;
      ax.XAxis.FontSize = 18;
      
     %title(num2str(p))
-      ylabel('normalized SWA','FontSize',18)
+      ylabel('SWA relative to baseline','FontSize',18)
     
     subplot(1,2,2)
         [r,p] = corr(length_rum',SWA_change','rows','complete')
@@ -171,6 +201,14 @@ SWA_change = SWA_after - SWA_before;
         l = lsline;
         l.LineWidth = 2;
         l.Color = 'black';
+        hold on
+        scatter(length_rum(reindeer==2),SWA_change(reindeer==2),'k','MarkerFaceColor',[0.4471 0.5529 0.7098])
+        hold on
+        scatter(length_rum(reindeer==1),SWA_change(reindeer==1),'k','MarkerFaceColor',[0.7098 0.6667 0.5451])
+        hold on
+        scatter(length_rum(reindeer==4),SWA_change(reindeer==4),'k','MarkerFaceColor',[0.4745 0.6588 0.5843])
+        hold on
+        scatter(length_rum(reindeer==3),SWA_change(reindeer==3),'k','MarkerFaceColor',[0.7020 0.5804 0.6824])
         %title(num2str(p))
      set ( gca, 'ydir', 'reverse' )
        ylabel('SWA change')

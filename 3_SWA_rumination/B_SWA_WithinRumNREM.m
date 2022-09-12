@@ -51,13 +51,13 @@ end
 SWAcourse_perminute=squeeze(nanmean(reshape(SWAcourse,[],15,180),2));
 
 h1=figure
-    
+% scatter(1:size(SWAcourse,2),nanmean(SWAcourse),'k','MarkerFaceColor',[0.4 0.4 0.4])   
 plot(nanmean(SWAcourse,1),'k')
 xlim([0 700])
 xticks([0 225 450 675])
 xticklabels({'0','15','30','45'})
 xlabel('minutes of rumination')
-ylabel('normalized SWA')
+ylabel('SWA relative to baseline')
 ylim([0 2])
        ax=gca;
        ax.XLabel.FontSize = 14;
@@ -66,9 +66,9 @@ ylim([0 2])
 % h2=figure
 %     
 % plot(nanmean(SWAcourse_perminute,1),'k')
-% xlim([0 705/15])
-% xticks([0 15 30 45])
-% xticklabels({'0','15','30','45'})
+% % xlim([0 705/15])
+% % xticks([0 15 30 45])
+% % xticklabels({'0','15','30','45'})
 % xlabel('minutes of rumination')
 % ylabel('normalized SWA')
 % ylim([0 2])
@@ -79,7 +79,7 @@ ylim([0 2])
 %% SWA buildup and decrease within NREM sleep
 
 clear
-close all
+
 
 savepath='';
 
@@ -132,18 +132,33 @@ end
 
 
 
-h1=figure
-    
+h3=figure
+% scatter(1:size(SWAcourse,2),nanmean(SWAcourse),'k','MarkerFaceColor',[0.4 0.4 0.4])    
 plot(nanmean(SWAcourse,1),'k')
 xlim([0 790])
 xticks([0 225 450 675 ])
 xticklabels({'0','15','30','45'})
 xlabel('minutes of NREM sleep')
-ylabel('normalized SWA')
+ylabel('SWA relative to baseline')
 ylim([0 2])
        ax=gca;
        ax.XLabel.FontSize = 14;
        ax.YLabel.FontSize = 14;
+       
+
+% h4=figure       
+% SWAcourse_perminute=squeeze(nanmean(reshape(SWAcourse,[],15,180),2));      
+% plot(nanmean(SWAcourse_perminute,1),'k')
+% % xlim([0 705/15])
+% % xticks([0 15 30 45])
+% % xticklabels({'0','15','30','45'})
+% xlabel('minutes of NREM sleep')
+% ylabel('SWA relative to baseline')
+% ylim([0 2])
+%        ax=gca;
+%        ax.XLabel.FontSize = 18;
+%        ax.YLabel.FontSize = 18;
+
 %% compare seasons
 % 
 % season=[];

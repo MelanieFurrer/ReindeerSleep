@@ -112,6 +112,46 @@ ggplot(df, aes(x=food_total, y=bw_change, color=season)) +
 
 
 
+##### 2b. estimated number of chews (chew frequency * tot. rum duration) correlates with bw-change #######
+
+
+
+
+p1 <- ggplot(df, aes(x=rum_indx, y=bw_change, color=season)) +
+  geom_point(size=5) + 
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE)+
+  theme_bw()+
+  ylim(-15,25)+
+  #xlim(20,400)+
+  ylab("bodyweight change (%)")+
+  xlab("estimated # rum-chews/ 24 hours")+
+  theme(text = element_text(size=20),legend.title = element_blank(),legend.text.align = 0,legend.position = c(0.25, 0.9))+
+  scale_color_manual(breaks=c("July", "December") ,labels=c(expression(Summer %->% Fall), expression(Winter %->% Summer)),values=c("#4daf4a","#377eb8",""))
+
+
+p2 <- ggplot(df, aes(x=rum, y=bw_change, color=season)) +
+  geom_point(size=5) + 
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE)+
+  theme_bw()+
+  ylim(-15,25)+
+  #xlim(20,400)+
+  ylab("bodyweight change (%)")+
+  xlab("rumination duration (min/24h)")+
+  theme(text = element_text(size=20),legend.title = element_blank(),legend.text.align = 0,legend.position = c(0.25, 0.9))+
+  scale_color_manual(breaks=c("July", "December") ,labels=c(expression(Summer %->% Fall), expression(Winter %->% Summer)),values=c("#4daf4a","#377eb8",""))
+
+grid.arrange(p2,p1, ncol = 2)
+
+
+
+model1 <- lmer(bw_change ~ rum + (1|season) + (1|reindeer)  , df)
+anova(model1)
+
+model2 <- lmer(bw_change ~ rum_indx + (1|season) + (1|reindeer)  , df)
+anova(model2)
+
+
+
 #### 3. plot change in sleep stages   #######
 
 model <- lmer(wake ~ season + (1|reindeer) , df)
