@@ -51,10 +51,77 @@ ggplot(gd, aes(x=timewindow, y=meanSWA)) +
   theme_bw()+
   theme(text = element_text(size=20),axis.text.x = element_text(size=20),legend.position = "none")+
   scale_x_discrete(labels= c("-2 to 0","0 to +2","+2 to +4", "+4 to +6"))+
-  xlab("time (h) from short sleep deprivation (SD)")+
+  xlab("hours from sleep deprivation")+
   ylab("SWA relative to baselie")+
   ylim(0.4, 2.2)+
   scale_color_manual(values=c("#377eb8", "#4daf4a", "#ff7f00"))
 
 
 dev.off()
+
+
+
+##### SWA increase and decrease separately #######
+
+
+##increase##
+
+model0 <- lmer(SWA ~ timewindow * season * timepoint + (1|reindeer), data=subset(df, timewindow== 1 | timewindow== 2))
+summary(model0)
+anova(model0)
+
+emmeans(model0, pairwise ~ timewindow, adjust = "tukey")
+
+model1 <- lmer(SWA ~ timewindow * season + (1|timepoint) + (1|reindeer), data=subset(df, timewindow== 1 | timewindow== 2))
+anova(model1)
+summary(model1)
+
+c.emm <- emmeans(model1, ~ timewindow*season)
+contrast(c.emm, interaction = c("consec"), by = NULL)
+contrast(c.emm,ctrast); print(c.emm)
+
+##decrease##
+
+model0 <- lmer(SWA ~ timewindow * season * timepoint + (1|reindeer), data=subset(df, timewindow== 2 | timewindow== 3 | timewindow== 4))
+summary(model0)
+anova(model0)
+
+emmeans(model0, pairwise ~ timewindow, adjust = "tukey")
+
+model2 <- lmer(SWA ~ timewindow * season + (1|timepoint) + (1|reindeer), data=subset(df, timewindow== 2 | timewindow== 3 | timewindow== 4))
+anova(model2)
+emmeans(model2, pairwise ~ timewindow, adjust = "tukey")
+
+
+
+
+
+p1 <-ggplot(data=subset(gd, timewindow== 1 | timewindow== 2), aes(x=timewindow, y=meanSWA)) +
+  geom_point(data=subset(gd, timewindow== 1 | timewindow== 2), aes(x=timewindow, y=meanSWA, color=season), size=4)+
+  geom_errorbar( aes(ymin=meanSWA-seSWA, ymax=meanSWA+seSWA, group=season, color=season), size=1, width = 0.1)+
+  geom_line(data=subset(gd, timewindow== 1 | timewindow== 2), aes(x=timewindow, y=meanSWA, group=season, color=season), size=1, linetype=1) +
+  theme_bw()+
+  theme(text = element_text(size=26),axis.text.x = element_text(size=24),legend.position = "none")+
+  scale_x_discrete(labels= c("-2 to 0","0 to +2"))+
+  xlab("hours from sleep deprivation")+
+  ylab("normalized SWA")+
+  ylim(0.4, 2.3)+
+  scale_color_manual(values=c("#377eb8", "#4daf4a", "#ff7f00"))
+
+
+p2 <- ggplot(data=subset(gd, timewindow== 2 | timewindow== 3 | timewindow== 4), aes(x=timewindow, y=meanSWA)) +
+  geom_point(data=subset(gd, timewindow== 2 | timewindow== 3 | timewindow== 4), aes(x=timewindow, y=meanSWA, color=season), size=4)+
+  geom_errorbar( aes(ymin=meanSWA-seSWA, ymax=meanSWA+seSWA, group=season, color=season), size=1, width = 0.1)+
+  geom_line(data=subset(gd, timewindow== 2 | timewindow== 3 | timewindow== 4), aes(x=timewindow, y=meanSWA, group=season, color=season), size=1, linetype=1) +
+  theme_bw()+
+  theme(text = element_text(size=26),axis.text.x = element_text(size=24),legend.position = "none")+
+  scale_x_discrete(labels= c("0 to +2","+2 to +4","+4 to +6"))+
+  xlab("hours from sleep deprivation")+
+  ylab("normalized SWA")+
+  ylim(0.4, 2.3)+
+  scale_color_manual(values=c("#377eb8", "#4daf4a", "#ff7f00"))
+
+grid.arrange(p1,p2,ncol = 2)
+
+
+

@@ -139,7 +139,7 @@ xlim([0 790])
 xticks([0 225 450 675 ])
 xticklabels({'0','15','30','45'})
 xlabel('minutes of NREM sleep')
-ylabel('SWA relative to baseline')
+ylabel('normalized SWA')
 ylim([0 2])
        ax=gca;
        ax.XLabel.FontSize = 14;

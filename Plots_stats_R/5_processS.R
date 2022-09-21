@@ -125,7 +125,7 @@ ggplot(df , aes(x=x, y=DeltaMSE_RumDecreaseS)) +
   geom_jitter(height = 0, width = 0,size = 1.5)+
   theme_bw()+
   theme(text = element_text(size=20))+
-  ylab("Diff. mean standard error")+
+  ylab(expression(paste(Delta, " mean standard error")))+
   ylim(-0.0045,0.0015)
 
 

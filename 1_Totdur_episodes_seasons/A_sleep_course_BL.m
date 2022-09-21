@@ -68,8 +68,8 @@ ax.FontSize = 12;
 ylim([10,60])
 xlim([0,13])
 %ylabel('sleep (min/h)','FontSize',16)
-xticks([1:13])
-xticklabels({'6','','','12','','','18','','','00','','','6'}) 
+xticks([1 4 7 10 13])
+xticklabels({'6','12','18','00','6'}) 
 xlabel('clock time','FontSize',14)
  hold on
  plot(mean(length_wake([1 4 9],:)),'k','LineWidth',1)
@@ -85,8 +85,8 @@ ax.FontSize = 12;
 ylim([10,60])
 xlim([0,13])
 %ylabel('sleep (min/h)','FontSize',16)
-xticks([1:13])
-xticklabels({'6','','','12','','','18','','','00','','','6'}) 
+xticks([1 4 7 10 13])
+xticklabels({'6','12','18','00','6'}) 
 xlabel('clock time','FontSize',14)
 set(gca,'yticklabel',{[]})
  hold on
@@ -103,8 +103,8 @@ ylim([10,60])
 xlim([0,13])
 %ylabel('sleep (min/h)','FontSize',16)
 xlabel('clock time','FontSize',14)
-xticks([1:13])
-xticklabels({'6','','','12','','','18','','','00','','','6'}) 
+xticks([1 4 7 10 13])
+xticklabels({'6','12','18','00','6'}) 
 set(gca,'yticklabel',{[]})
  hold on
  plot(mean(length_wake([3 6 8 11],:)),'k','LineWidth',1)
@@ -228,6 +228,6 @@ set(gca,'yticklabel',{[]})
   
 cd(savepath)
 
-print(h1,['wake_course_per2h_BL2_allseasons'],'-dpng','-r500')
+print(h1,['wake_course_per2h_BL2_wide'],'-dpng','-r500')
 close all  
 
