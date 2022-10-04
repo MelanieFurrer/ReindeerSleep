@@ -184,7 +184,6 @@ end
        
 %% save file where only SWA during sleep episodes with rum are included %%
 
-savepath='C:\Users\schlaf\Documents\reindeer\Data_Analysis_main_experiment\Results\SWA_normalized_aligned\';
 cd(savepath)
 load('SWA_scoring_episodes_43hnorm.mat')
 load('episodes_sleep_rum.mat')
@@ -195,17 +194,13 @@ for n=1:11
 
 episodes_sleep_rum_n=episodes_sleep_rum(episodes_sleep_rum(:,1)==n,2:3);
 
-    for e=1:size(episodes_sleep_rum_n,1)
-        epiok(episodes_sleep_rum_n(e,1):episodes_sleep_rum_n(e,2))=1;        
+    for e=1:length(episodes_sleep_rum_n)
+        epiok(episodes_sleep_rum_n(e,1):episodes_sleep_rum_n(e,2))=1;
+        
     end
     
-SWA_normalized(n,find(epiok~=1))=NaN;
+SWA_normalized(n,find(epiok)~=1)=NaN;
 
 end    
     
-%%%% save 
-cd(savepath)
-save('SWA_scoring_episodes_43hnorm_sleepepi_rum','SWA_normalized','SWA_absolute','scoring','filenames','episodes')
-close all  
-clear    
-
+    
