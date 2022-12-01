@@ -56,59 +56,98 @@ end
 
 %% plot wake
 close all
-h1=figure  
+h1=figure('defaultAxesTickDir', 'out',  'defaultAxesTickDirMode', 'manual')  
 
 subplot(131)
 
-errorbar(mean(length_wake([1 4 9],:)),std(length_wake([1 4 9],:)),'-s','MarkerSize',4,...
+x=0:1:13;
+G1(2:13)=mean(length_wake([1 4 9],:));
+G1(1)=G1(2);
+G1(14)=G1(13);
+patch([x fliplr(x)], [G1 0*ones(size(G1))], [0.9,0.9,0.9])        % Below Curve
+hold on
+patch([x fliplr(x)], [G1 60*ones(size(G1))], [0.72,0.77,1])        % above Curve
+hold on
+errorbar(mean(length_wake([1 4 9],:)),std(length_wake([1 4 9],:)),'-o','MarkerSize',4,...
     'MarkerEdgeColor','k','MarkerFaceColor','k','Color','k')
+
 ax = gca
 ax.FontSize = 12;
 % title('December','FontSize',20)
-ylim([10,60])
-xlim([0,13])
-%ylabel('sleep (min/h)','FontSize',16)
+ylim([0,60])
+xlim([0.5,12.5])
+ylabel('minutes/hour','FontSize',14)
 xticks([1 4 7 10 13])
 xticklabels({'6','12','18','00','6'}) 
 xlabel('clock time','FontSize',14)
  hold on
- plot(mean(length_wake([1 4 9],:)),'k','LineWidth',1)
- 
+ plot(mean(length_wake([1 4 9],:)),'Color','k','LineWidth',1)
+
+box off 
+line([0.5 12.5],[60 60],'Color','k')
+line([12.5 12.5],[0 60],'Color','k')
+line([0.5 0.5],[0 60],'Color','k')
+
+
  
 subplot(132)
 
-errorbar(mean(length_wake([2 5 7 10],:)),std(length_wake([2 5 7 10],:)),'-s','MarkerSize',4,...
+x=0:1:13;
+G1(2:13)=mean(length_wake([2 5 7 10],:));
+G1(1)=G1(2);
+G1(14)=G1(13);
+patch([x fliplr(x)], [G1 0*ones(size(G1))], [0.9,0.9,0.9])        % Below Curve
+hold on
+patch([x fliplr(x)], [G1 60*ones(size(G1))], [0.72,0.77,1])        % above Curve
+hold on
+errorbar(mean(length_wake([2 5 7 10],:)),std(length_wake([2 5 7 10],:)),'-o','MarkerSize',4,...
     'MarkerEdgeColor','k','MarkerFaceColor','k','Color','k')
 ax = gca
 ax.FontSize = 12;
 % title('July','FontSize',20)
-ylim([10,60])
-xlim([0,13])
+ylim([0,60])
+xlim([0.5,12.5])
 %ylabel('sleep (min/h)','FontSize',16)
 xticks([1 4 7 10 13])
 xticklabels({'6','12','18','00','6'}) 
-xlabel('clock time','FontSize',14)
+%xlabel('clock time','FontSize',14)
 set(gca,'yticklabel',{[]})
  hold on
- plot(mean(length_wake([2 5 7 10],:)),'k','LineWidth',1)
+ plot(mean(length_wake([2 5 7 10],:)),'Color','k','LineWidth',1)
+box off 
+line([0.5 12.5],[60 60],'Color','k')
+line([12.5 12.5],[0 60],'Color','k')
+line([0.5 0.5],[0 60],'Color','k')
+
 
 subplot(133)
 
-errorbar(mean(length_wake([3 6 8 11],:)),std(length_wake([3 6 8 11],:)),'-s','MarkerSize',4,...
+x=0:1:13;
+G1(2:13)=mean(length_wake([3 6 8 11],:));
+G1(1)=G1(2);
+G1(14)=G1(13);
+patch([x fliplr(x)], [G1 0*ones(size(G1))], [0.9,0.9,0.9])     % Below Curve
+hold on
+patch([x fliplr(x)], [G1 60*ones(size(G1))], [0.72,0.77,1])        % above Curve
+hold on
+errorbar(mean(length_wake([3 6 8 11],:)),std(length_wake([3 6 8 11],:)),'-o','MarkerSize',4,...
     'MarkerEdgeColor','k','MarkerFaceColor','k','Color','k')
 ax = gca
 ax.FontSize = 12;
 % title('September','FontSize',20)
-ylim([10,60])
-xlim([0,13])
+ylim([0,60])
+xlim([0.5,12.5])
 %ylabel('sleep (min/h)','FontSize',16)
-xlabel('clock time','FontSize',14)
+%xlabel('clock time','FontSize',14)
 xticks([1 4 7 10 13])
 xticklabels({'6','12','18','00','6'}) 
 set(gca,'yticklabel',{[]})
  hold on
- plot(mean(length_wake([3 6 8 11],:)),'k','LineWidth',1)
- 
+ plot(mean(length_wake([3 6 8 11],:)),'Color','k','LineWidth',1)
+box off 
+line([0.5 12.5],[60 60],'Color','k')
+line([12.5 12.5],[0 60],'Color','k')
+line([0.5 0.5],[0 60],'Color','k')
  
 %% plot all seasons in one plot in different colours
 
@@ -228,6 +267,6 @@ set(gca,'yticklabel',{[]})
   
 cd(savepath)
 
-print(h1,['wake_course_per2h_BL2_wide'],'-dpng','-r500')
+print(h1,['wake_course_per2h_BL2_presentation2'],'-dpng','-r500')
 close all  
 

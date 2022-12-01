@@ -41,17 +41,22 @@ summary(model1)
 
 ##### correlations rum-nrem durations BL2 #########
 
-pBL2 <- ggplot(dfBL2, aes(x=rum_dur, y=nrem_dur, color=season)) +
-  geom_point(size=5) + 
+setwd("C:/Users/schlaf/Documents/reindeer/Data_Analysis_main_experiment/Results/nrem_rum")
+tiff("SR_Fig4.png", units="in", width=7.3, height=5.2, res=300)
+
+ggplot(dfBL2, aes(x=rum_dur, y=nrem_dur, color=season)) +
+  geom_point(size=6) + 
   geom_smooth(method=lm, se=FALSE, fullrange=TRUE)+
   theme_bw()+
+  theme(text = element_text(size=20,color="black"),axis.text.x = element_text(size=18,color="black",vjust = .7),axis.text.y = element_text(size=18,color="black",hjust = 0.7),axis.title.y = element_text(margin = margin(t = 0, r = 8, b = 0, l = 0)),axis.title.x = element_text(margin = margin(t = 8, r = 0, b = 0, l = 0)),axis.ticks.length=unit(.15, "cm"),legend.text=element_text(size=18))+
   #ylim(200,500)+
   #xlim(20,400)+
-  ylab("NREM sleep duration (min/24 h)")+
-  xlab("rumination duration (min/24 h)")+
+  ylab("NREM sleep (min/24 h)")+
+  xlab("rumination (min/24 h)")+
+  scale_color_manual(values=c("#004F96", "#990000", "#FF8A15"),labels=c('Winter', 'Summer', 'Fall'))
 
-  theme(text = element_text(size=18))+
-  scale_color_manual(values=c("#377eb8", "#4daf4a", "#ff7f00"))
+
+dev.off()
 
 
 model1  <- lmer(nrem_dur ~ rum_dur + (1|season),dfBL2)
@@ -61,6 +66,8 @@ r.squaredGLMM(model1)
 cor.test(dfBL2$nrem_dur,dfBL2$rum_dur)
 
 #cor.test(dfBL2$nrem_dur,dfBL2$rum_dur)
+
+
 
 
 ##### correlations rum-nrem durations sleep deprivation #########

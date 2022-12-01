@@ -105,8 +105,10 @@ nepochs_after(nepochs_before<nrem_swa_min | nepochs_after<nrem_swa_min)=NaN;
 SWA_change = SWA_after - SWA_before;
 
 
-%%%plots %%%
-h1=figure
+%%%% plots %%%
+
+
+h1=figure('defaultAxesTickDir', 'out',  'defaultAxesTickDirMode', 'manual')
     subplot(1,2,1)
 
     [h,p,ci,stats] = ttest(SWA_before,SWA_after)
@@ -120,15 +122,21 @@ h1=figure
     
    
     plot([1:2],[nanmean(SWA_before),nanmean(SWA_after)],'-ko','MarkerFaceColor','black','LineWidth',2)
-     ylim([0 3])
+     ylim([0 3.2])
+     yticks([0:1:3])
      xlim([0.8 2.2])
      xticks([1 2]);
-     xticklabels({'before','after'});
+     xticklabels({'    before'+"\newline"+' rumination','     after'+"\newline"+'rumination'});
      ax=gca;
      ax.XAxis.FontSize = 18;
-     
+     ax.YAxis.FontSize = 16; 
+     ax.YLabel.FontSize = 18;
     %title(num2str(p))
-      ylabel('normalized SWA','FontSize',18)
+      ylabel({'slow-wave activity' ; 'during NREM sleep'},'FontSize',18)
+      box off 
+line([0 2.2],[3.2 3.2],'Color','k')
+line([2.2 2.2],[0 3.2],'Color','k')
+
     
     subplot(1,2,2)
         [coef,p] = corr(length_rum',SWA_change','rows','complete')
@@ -137,13 +145,19 @@ h1=figure
         l.LineWidth = 2;
         l.Color = 'black';
         %title(num2str(p))
+        ylim([-2 1])
+        yticks([-2:1:1])
      set ( gca, 'ydir', 'reverse' )
-       ylabel('SWA change')
+       ylabel({'{\Delta} slow-wave activity' ; '(after - before)'})
        xlabel('rumination duration (min)')
        ax=gca;
+       ax.XAxis.FontSize = 16;
+       ax.YAxis.FontSize = 16;             
        ax.XLabel.FontSize = 18;
        ax.YLabel.FontSize = 18;
-       
+       xlim([0 64])      
+line([0 64],[-2 -2],'Color','k')
+line([64 64],[1 -2],'Color','k')
 
 %%%% find epochs with rum for modelling of process S %%%%%%%
 
@@ -154,7 +168,10 @@ episodes_sleep_rum(:,3)=endepo(r);
 episodes_sleep_rum(find(isnan(SWA_change)),:)=[];
 
 
+%% save
 
+cd('C:\Users\schlaf\Documents\reindeer\Data_Analysis_main_experiment\Results\SWA_rum')
+print(h1,'Fig3.png','-dpng','-r1000')
 
 
        

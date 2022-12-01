@@ -55,7 +55,7 @@ end
     rum = find(vissymb_dark=='t' | vissymb_dark=='4');
     length_nrem_dark(t,i)=length(nrem)/15/(length(vissymb_dark)/15/60);
     length_nrem_rum_dark(t,i)=length(nrem_rum)/15/(length(vissymb_dark)/15/60);
-    length_sleep_dark(t,i)=length(sleep)/15/(length(vissymb_dark)/15/60);
+    length_sleep_dark(t,i)=(length(sleep)/15)/(length(vissymb_dark)/15/60);
     length_rem_dark(t,i)=length(rem)/15/(length(vissymb_dark)/15/60);
     length_rum_dark(t,i)=length(rum)/15/(length(vissymb_dark)/15/60);
     
@@ -68,7 +68,7 @@ end
     rum = find(vissymb_light=='t' | vissymb_light=='4');
     length_nrem_light(t,i)=length(nrem)/15/(length(vissymb_light)/15/60);
     length_nrem_rum_light(t,i)=length(nrem_rum)/15/(length(vissymb_light)/15/60);
-    length_sleep_light(t,i)=length(sleep)/15/(length(vissymb_light)/15/60);
+    length_sleep_light(t,i)=(length(sleep)/15)/(length(vissymb_light)/15/60);
     length_rem_light(t,i)=length(rem)/15/(length(vissymb_light)/15/60);
     length_rum_light(t,i)=length(rum)/15/(length(vissymb_light)/15/60);
 end
@@ -86,66 +86,77 @@ ratio_rum=length_rum_dark./length_rum_light;
 
 %% plot 12h ratios sleep (NREM, REM and RUM)
 
-
-h3=figure('DefaultAxesFontSize',18)
+close all
+h3=figure('DefaultAxesFontSize',16,'defaultAxesTickDir', 'out',  'defaultAxesTickDirMode', 'manual')
 
 subplot(1,3,1)
-plot(ratio_sleep(:,1),'-s','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+plot(ratio_sleep(:,1),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
 hold on
-plot(ratio_sleep(:,4),'-s','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+plot(ratio_sleep(:,4),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
 hold on
-plot(ratio_sleep(:,9),'-s','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+plot(ratio_sleep(:,9),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
 hold on
-plot(mean(ratio_sleep(:,[1 4 9]),2),'ks-','MarkerFaceColor','k','MarkerSize',6,'LineWidth',3)
-ylim([0.2 2.6])
-yticks([0.4:0.4:2.4])
-ylabel('12h/12h ratio total sleep duration')
+plot(mean(ratio_sleep(:,[1 4 9]),2),'ko-','MarkerFaceColor','k','MarkerSize',4,'LineWidth',3)
+ylim([0.2 2.5])
+yticks([0.5:0.5:2])
+ylabel('sleep ratio','FontSize',18)
 xlim([0 25])
-xticks([2 14])
-xticklabels({'6-18/18-6','18-6/6-18'})
-xlabel('time windows (clock time)')
-title('December')
+% xticks([2 8 14 20])
+% xticklabels({'12','18','00','6'})
+% xlabel('time windows (clock time)','FontSize',18)
+xticks([1 7 13 19])
+xticklabels({'6','12','18','24'})
+xlabel('time windows','FontSize',18)
+%title('December')
+box off 
+line([0 25],[2.5 2.5],'Color','k')
+line([25 25],[0 25],'Color','k')
+
 
 
 subplot(1,3,2)
-plot(ratio_sleep(:,2),'-s','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+plot(ratio_sleep(:,2),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
 hold on
-plot(ratio_sleep(:,5),'-s','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+plot(ratio_sleep(:,5),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
 hold on
-plot(ratio_sleep(:,10),'-s','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+plot(ratio_sleep(:,10),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
 hold on
-plot(ratio_sleep(:,7),'-s','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+plot(ratio_sleep(:,7),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
 hold on
-plot(mean(ratio_sleep(:,[2 5 7 10]),2),'ks-','MarkerFaceColor','k','MarkerSize',6,'LineWidth',3)
-ylim([0.2 2.6])
-yticks([0.4:0.4:2.6])
-ylabel('12h/12h ratio total sleep duration')
+plot(mean(ratio_sleep(:,[2 5 7 10]),2),'ko-','MarkerFaceColor','k','MarkerSize',4,'LineWidth',3)
+ylim([0.2 2.5])
+yticks([0.5:0.5:2])
+%ylabel('sleep ratio')
 xlim([0 25])
-xticks([2 14])
-xticklabels({'6-18/18-6','18-6/6-18'})
-xlabel('time windows (clock time)')
-title('July')
-
+xticks([1 7 13 19])
+xticklabels({'6','12','18','24'})
+%xlabel('time windows (clock time)','FontSize',18))
+%title('July')
+box off 
+line([0 25],[2.5 2.5],'Color','k')
+line([25 25],[0 2.5],'Color','k')
 
 subplot(1,3,3)
-plot(ratio_sleep(:,3),'-s','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+plot(ratio_sleep(:,3),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
 hold on
-plot(ratio_sleep(:,6),'-s','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+plot(ratio_sleep(:,6),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
 hold on
-plot(ratio_sleep(:,11),'-s','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+plot(ratio_sleep(:,11),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
 hold on
-plot(ratio_sleep(:,8),'-s','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+plot(ratio_sleep(:,8),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
 hold on
-plot(mean(ratio_sleep(:,[3 6 8 11]),2),'ks-','MarkerFaceColor','k','MarkerSize',6,'LineWidth',3)
-ylim([0.2 2.6])
-yticks([0.4:0.4:2.6])
-ylabel('12h/12h ratio total sleep duration')
+plot(mean(ratio_sleep(:,[3 6 8 11]),2),'ko-','MarkerFaceColor','k','MarkerSize',4,'LineWidth',3)
+ylim([0.2 2.5])
+yticks([0.5:0.5:2])
+%ylabel('sleep ratio')
 xlim([0 25])
-xticks([2 14])
-xticklabels({'6-18/18-6','18-6/6-18'})
-xlabel('time windows (clock time)')
-title('September')
-
+xticks([1 7 13 19])
+xticklabels({'6','12','18','24'})
+%xlabel('time windows (clock time)')
+%title('September')
+box off 
+line([0 25],[2.5 2.5],'Color','k')
+line([25 25],[0 2.5],'Color','k')
 
 %%%stats%%%
 
@@ -168,5 +179,107 @@ sig_july_corr=find(pFDR_july<0.05);
 sig_sep_corr=find(pFDR_sep<0.05);    
 
   
-  
+
+%% save
+
+cd('C:\Users\schlaf\Documents\reindeer\Data_Analysis_main_experiment\Results\durationacross24h')
+print(h3,'ratios_F1Ba.png','-dpng','-r1000')
+
+
+
+  %% plot 12h ratios sleep (NREM, REM and RUM) -> shifted
+
+ratio_sleep2=ratio_sleep([19:24 1:18],:);
+
+close all
+h3=figure('DefaultAxesFontSize',16,'defaultAxesTickDir', 'out',  'defaultAxesTickDirMode', 'manual')
+
+subplot(1,3,1)
+plot(ratio_sleep2(:,1),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+hold on
+plot(ratio_sleep2(:,4),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+hold on
+plot(ratio_sleep2(:,9),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+hold on
+plot(mean(ratio_sleep2(:,[1 4 9]),2),'ko-','MarkerFaceColor','k','MarkerSize',4,'LineWidth',3)
+ylim([0.1 2.5])
+yticks([0.5:0.5:2])
+ylabel('sleep ratio','FontSize',18)
+xlim([0 25])
+% xticks([2 8 14 20])
+% xticklabels({'12','18','00','6'})
+% xlabel('time windows (clock time)','FontSize',18)
+xticks([1 7 13 19])
+xticklabels({'0','6','12','18'})
+xlabel('time windows','FontSize',18)
+%title('December')
+box off 
+line([0 25],[2.5 2.5],'Color','k')
+line([25 25],[0 25],'Color','k')
+
+
+
+subplot(1,3,2)
+plot(ratio_sleep2(:,2),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+hold on
+plot(ratio_sleep2(:,5),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+hold on
+plot(ratio_sleep2(:,10),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+hold on
+plot(ratio_sleep2(:,7),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+hold on
+plot(mean(ratio_sleep2(:,[2 5 7 10]),2),'ko-','MarkerFaceColor','k','MarkerSize',4,'LineWidth',3)
+ylim([0.1 2.5])
+yticks([0.5:0.5:2])
+%ylabel('sleep ratio')
+xlim([0 25])
+xticks([1 7 13 19])
+xticklabels({'0','6','12','18'})
+%xlabel('time windows (clock time)','FontSize',18))
+%title('July')
+box off 
+line([0 25],[2.5 2.5],'Color','k')
+line([25 25],[0 2.5],'Color','k')
+
+subplot(1,3,3)
+plot(ratio_sleep2(:,3),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+hold on
+plot(ratio_sleep2(:,6),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+hold on
+plot(ratio_sleep2(:,11),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+hold on
+plot(ratio_sleep2(:,8),'-o','color',[0.7 0.7 0.7],'MarkerFaceColor',[0.7 0.7 0.7],'MarkerSize',3,'LineWidth',1)
+hold on
+plot(mean(ratio_sleep2(:,[3 6 8 11]),2),'ko-','MarkerFaceColor','k','MarkerSize',4,'LineWidth',3)
+ylim([0.1 2.5])
+yticks([0.5:0.5:2])
+%ylabel('sleep ratio')
+xlim([0 25])
+xticks([1 7 13 19])
+xticklabels({'0','6','12','18'})
+%xlabel('time windows (clock time)')
+%title('September')
+box off 
+line([0 25],[2.5 2.5],'Color','k')
+line([25 25],[0 2.5],'Color','k')
+
+%%%stats%%%
+
+for i=1:24
+    
+    [h,p_dec(i)] = ttest(length_sleep_dark(i,[1 4 9]),length_sleep_light(i,[1 4 9]));
+    [h,p_july(i)] = ttest(length_sleep_dark(i,[2 5 7 10]),length_sleep_light(i,[2 5 7 10]));
+    [h,p_sep(i)] = ttest(length_sleep_dark(i,[3 6 8 11]),length_sleep_light(i,[3 6 8 11]));
+     
+end
+
+
+%%% correct for multiple testing %%%
+pFDR_dec = mafdr(p_dec,'BHFDR',true); 
+pFDR_july = mafdr(p_july,'BHFDR',true); 
+pFDR_sep = mafdr(p_sep,'BHFDR',true); 
+
+sig_dec_corr=find(pFDR_dec<0.05);
+sig_july_corr=find(pFDR_july<0.05);        
+sig_sep_corr=find(pFDR_sep<0.05); 
   

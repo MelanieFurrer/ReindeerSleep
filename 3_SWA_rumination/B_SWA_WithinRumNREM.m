@@ -50,18 +50,25 @@ end
 
 SWAcourse_perminute=squeeze(nanmean(reshape(SWAcourse,[],15,180),2));
 
-h1=figure
-% scatter(1:size(SWAcourse,2),nanmean(SWAcourse),'k','MarkerFaceColor',[0.4 0.4 0.4])   
+h2=figure('defaultAxesTickDir', 'out',  'defaultAxesTickDirMode', 'manual')
+
+subplot(1,1,1)
 plot(nanmean(SWAcourse,1),'k')
 xlim([0 700])
 xticks([0 225 450 675])
 xticklabels({'0','15','30','45'})
 xlabel('minutes of rumination')
-ylabel('SWA relative to baseline')
+ylabel({'slow-wave activity' ; 'during rumination'})
 ylim([0 2])
        ax=gca;
-       ax.XLabel.FontSize = 14;
-       ax.YLabel.FontSize = 14;
+       ax.XAxis.FontSize = 16;
+       ax.YAxis.FontSize = 16;             
+       ax.XLabel.FontSize = 18;
+       ax.YLabel.FontSize = 18;
+
+       box off 
+line([0 700],[2 2],'Color','k')
+line([700 700],[0 2],'Color','k')
 
 % h2=figure
 %     
@@ -78,7 +85,7 @@ ylim([0 2])
 
 %% SWA buildup and decrease within NREM sleep
 
-clear
+clearvars -except h2
 
 
 savepath='';
@@ -132,19 +139,24 @@ end
 
 
 
-h3=figure
+h3=figure('defaultAxesTickDir', 'out',  'defaultAxesTickDirMode', 'manual')
 % scatter(1:size(SWAcourse,2),nanmean(SWAcourse),'k','MarkerFaceColor',[0.4 0.4 0.4])    
+subplot(1,1,1)
 plot(nanmean(SWAcourse,1),'k')
 xlim([0 790])
 xticks([0 225 450 675 ])
 xticklabels({'0','15','30','45'})
 xlabel('minutes of NREM sleep')
-ylabel('normalized SWA')
+ylabel({'slow-wave activity' ; 'during NREM sleep'})
 ylim([0 2])
        ax=gca;
-       ax.XLabel.FontSize = 14;
-       ax.YLabel.FontSize = 14;
-       
+       ax.XAxis.FontSize = 16;
+       ax.YAxis.FontSize = 16;             
+       ax.XLabel.FontSize = 18;
+       ax.YLabel.FontSize = 18;
+box off 
+line([0 790],[2 2],'Color','k')
+line([790 790],[0 2],'Color','k')
 
 % h4=figure       
 % SWAcourse_perminute=squeeze(nanmean(reshape(SWAcourse,[],15,180),2));      
@@ -158,6 +170,12 @@ ylim([0 2])
 %        ax=gca;
 %        ax.XLabel.FontSize = 18;
 %        ax.YLabel.FontSize = 18;
+
+%% save
+
+cd('C:\Users\schlaf\Documents\reindeer\Data_Analysis_main_experiment\Results\SWA_rum')
+print(h2,'Fig3c.png','-dpng','-r1000')
+print(h3,'Fig3d.png','-dpng','-r1000')
 
 %% compare seasons
 % 

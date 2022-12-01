@@ -108,10 +108,12 @@ for i=1:nfiles
         STD_2=vissymb_cut;
         STD_2(end+1:38700)='w';
         
-      % Put together and normalize with Baseline (5:00 - 5:00)
+      % Put together and normalize with Baseline (5:00 - 5:00),2nd part or
+      % all
         SWA_filled_012=cat(2,SWA_filled_0,SWA_filled_1,SWA_filled_2);
         SWA_BL = SWA_filled_2(15*60*15+1:39*60*15); % SWA of baseline (5:00 - 5:00, starting 15 hours after start of 2nd recording)
-        SWA_filled_normalized=SWA_filled_012/nanmean(SWA_filled_2);  % normalize with second half of experiment (SD u. BL, 43h, 14:00 - 9:00)
+        SWA_filled_normalized=SWA_filled_012/nanmean(SWA_filled_012);  % normalize with whole recording
+%         SWA_filled_normalized=SWA_filled_012/nanmean(SWA_filled_2);  % normalize with second half of experiment (SD u. BL, 43h, 14:00 - 9:00)
 %         SWA_filled_normalized=SWA_filled_012/nanmean(SWA_BL);  % normalize with BL 2 (5:00 - 5:00)
         STD=horzcat(STD_0,STD_1,STD_2);
 
@@ -140,7 +142,7 @@ load('episodes.mat')
   %% save
   
 cd(savepath)
-save('SWA_scoring_episodes_43hnorm','SWA_normalized','SWA_absolute','scoring','filenames','episodes')
+save('SWA_scoring_episodes_allnorm','SWA_normalized','SWA_absolute','scoring','filenames','episodes')
 close all  
 clear
 
