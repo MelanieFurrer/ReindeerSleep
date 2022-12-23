@@ -173,5 +173,3 @@ episodes_sleep_rum(find(isnan(SWA_change)),:)=[];
 cd('C:\Users\schlaf\Documents\reindeer\Data_Analysis_main_experiment\Results\SWA_rum')
 print(h1,'Fig3.png','-dpng','-r1000')
 
-
-       

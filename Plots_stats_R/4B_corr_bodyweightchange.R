@@ -91,7 +91,7 @@ ggplot(df, aes(x=rum, y=bw_change, color=season)) +
   ylab("bodyweight change (%)")+
   xlab("rumination duration (min/24h)")+
   theme(text = element_text(size=18),legend.title = element_blank(),legend.text.align = 0,legend.position = c(0.25, 0.9))+
-  scale_color_manual(breaks=c("July", "December") ,labels=c(expression(Summer %->% Fall), expression(Winter %->% Summer)),values=c("#4daf4a","#377eb8",""))
+  scale_color_manual(breaks=c("July", "December") ,labels=c(expression(Summer %->% Fall), expression(Winter %->% Summer)),values=c("#990000","#004F96",""))
 
 
 
