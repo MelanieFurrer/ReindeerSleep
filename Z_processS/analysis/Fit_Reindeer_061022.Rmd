@@ -1,0 +1,535 @@
+---
+title: "Fit Reindeer Data"
+author: "Maxime Jan"
+date: '`r Sys.Date()`'
+output:
+  html_document:
+    code_folding: hide
+    df_print: paged
+    fig_caption: yes
+    highlight: tango
+    number_sections: no
+    theme: united
+    toc: yes
+    toc_depth: 4
+    rows.print: 6
+    toc_float: yes
+  pdf_document:
+    fig_caption: yes
+  word_document:
+    toc: yes
+    toc_depth: '4'
+---
+
+# LIBS
+
+```{r}
+setwd("C:/Users/schlaf/Documents/reindeer/Data_Analysis_main_experiment/RDsleepAnalysis/R/Z_processS/analysis")
+library(Rcpp)
+library(optimx)
+library(reshape2)
+library(ggplot2)
+library(patchwork)
+library(parallel)
+library(doSNOW)
+library(weights)
+NCORES<-2
+```
+
+# Functions & Data
+
+my functions
+
+```{r}
+sourceCpp("RFunction/Process_S_And_SWAdynamics.cpp") # Function to simulate process-S and SWA
+load("../data/dataReindeer_processed_BLnorm.Rdata") # see ProcessData.Rmd
+source("RFunction/ModelReinderSWA_061022.R")
+mm<-read.table("../data/metadata.txt",header=T)
+```
+
+
+# Example {.tabset}
+
+```{r}
+SWAsimu<-SWA_Simulation(NREM = c(1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1),
+               Wake =  c(0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0),
+               Rumination = c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0),
+               Time = 1:30,
+               U = 3.5,L = 0,tau_wake = 8,tau_nrem = 10,tau_rumination = 5,
+               tau_swa_synchro = 2,tau_swa_desynchro = 1,L_swa = 0,init_ProcessS = 3.5,init_SWA = 0,RuminationDecreasePS = T  
+                )
+```
+
+Blue line is SWA, red line is process-S
+
+```{r}
+par(mfrow=c(2,1))
+plot(SWAsimu$time,SWAsimu$ProcessS[-1],type="l",col="red",ylim=c(-1,3.5),xlab="Time",ylab="SWA & Process-S")
+lines(SWAsimu$time,SWAsimu$SWAdynamics[-1],col="blue")
+
+plot(SWAsimu$time,SWAsimu$ProcessS[-1] - SWAsimu$SWAdynamics[-1],type="l",xlab="Time",ylab="SWA-Process-S")
+lines((SWAsimu$ProcessS[-1] - SWAsimu$SWAdynamics[-1])[1]*(exp(-(0:5)/2)),col="red",lty=2)
+```
+
+# View data
+
+SWA & SWA in the first NREM sleep episode of at least 100 epochs [4s.]
+
+Fit and exponential function and display the maximum value (use maximum for starting value of process-S)
+
+```{r,fig.height=8,fig.width=8}
+par(mfcol=c(4,2))
+par(mar=c(2,5,2,2))
+for (i in seq(1,11)){
+  Ind<-paste("Ind",i,sep="")
+  plot(dataReindeer$FullDeltaPow[[Ind]]$Time,dataReindeer$FullDeltaPow[[Ind]]$SWA,type="l",col=rgb(0,0,0,.1),main=Ind,xlab="",ylab="SWA")
+  
+  # First sleep episode
+  sleepep<-dataReindeer$NREMEpisodes[[Ind]][dataReindeer$NREMEpisodes[[Ind]][,1] > 100,][1,]
+  idx<-seq(sleepep[2],sleepep[3])
+  
+  Time<-dataReindeer$FullDeltaPow[[Ind]]$Time[idx]
+  SWA<-dataReindeer$FullDeltaPow[[Ind]]$SWA[idx] 
+    
+  plot(Time,SWA,type="l",col=rgb(0,0,0,.8),main="First NREM Episode > 100 epochs",xlab="Time",ylab="SWA")
+  
+  # Fit exp function
+  idx_na<- ! is.na(SWA)
+  Time<-Time[idx_na]
+  SWA<-SWA[idx_na]
+  
+  objfun<-function(params){
+    fitt<-params["C"]+params["A"]*(1-exp(-Time/params["k"]))
+    return(sum((SWA-fitt)^2))
+  }
+  pp<-optimx(objfun,par=c(C=0,A=2,k=10),method = "nlminb")
+  
+  lines(Time,pp[1,"C"]+pp[1,"A"]*(1-exp(-Time/pp[1,"k"])),col="blue")
+  maxvalreached<-pp[1,"C"]+pp[1,"A"]*(1-exp(-Time[length(Time)]/pp[1,"k"]))
+  mtext(side = 3,text=round(maxvalreached,2),padj=1.5)
+}
+
+```
+
+Get upper asymptote also common for all Reindeer: 
+
+```{r}
+# Mean quantile 99% value for the first hour of NREM
+#ULIMITS<-mean(sapply(seq(1,10),function(x){quantile(na.omit(dataReindeer$FullDeltaPow[[x]]$SWA[dataReindeer$FullDeltaPow[[x]]$Time<12])[1:900],na.rm=T,prob=0.985)}),na.rm=T)
+
+LLIMITS<-mean(sapply(seq(1,11),function(x){quantile(na.omit(dataReindeer$FullDeltaPow[[x]]$SWA),na.rm=T,prob=0.01)}),na.rm=T)
+ULIMITS<-mean(sapply(seq(1,11),function(x){quantile(na.omit(dataReindeer$FullDeltaPow[[x]]$SWA),na.rm=T,prob=0.99)}),na.rm=T)
+
+#ULIMITS<-mean(sapply(seq(1,11),function(x){quantile(na.omit(dataReindeer$FullDeltaPow[[x]]$SWA),na.rm=T,prob=0.99)}),na.rm=T)
+
+# Fixed upper asymptote to ULIMITS, used in functions ModelReinderSWA.R
+
+```
+
+```{r}
+# Consider first value of Ind1 and Ind11 as NA as we have missing data
+dataReindeer$FullDeltaPow$Ind1$SWA[dataReindeer$FullDeltaPow$Ind1$Time<40]<-NA
+dataReindeer$SWdf$Ind1$Wake[dataReindeer$SWdf$Ind1$Time<40]<-0
+dataReindeer$SWdf$Ind1$Sleep[dataReindeer$SWdf$Ind1$Time<40]<-0
+dataReindeer$SWdf$Ind1$NREM[dataReindeer$SWdf$Ind1$Time<40]<-0
+dataReindeer$SWdf$Ind1$REM[dataReindeer$SWdf$Ind1$Time<40]<-0
+dataReindeer$SWdf$Ind1$Rumination[dataReindeer$SWdf$Ind1$Time<40]<-0
+
+
+dataReindeer$FullDeltaPow$Ind11$SWA[dataReindeer$FullDeltaPow$Ind11$Time<20]<-NA
+dataReindeer$SWdf$Ind11$Wake[dataReindeer$SWdf$Ind11$Time<20]<-0
+dataReindeer$SWdf$Ind11$Sleep[dataReindeer$SWdf$Ind11$Time<20]<-0
+dataReindeer$SWdf$Ind11$NREM[dataReindeer$SWdf$Ind11$Time<20]<-0
+dataReindeer$SWdf$Ind11$REM[dataReindeer$SWdf$Ind11$Time<20]<-0
+dataReindeer$SWdf$Ind11$Rumination[dataReindeer$SWdf$Ind11$Time<20]<-0
+```
+
+
+# Fitting data
+
+```{r}
+cl <- makeCluster(NCORES)
+clusterExport(cl,c("optimx"))
+registerDoSNOW(cl)
+
+# Fit all Reindeer, Rumination not free, decreasing Process-S
+fitsReindeer_RFf_RDt <- foreach(i = 1:11,.packages=c("optimx","Rcpp"),.noexport = "SWA_Simulation") %dopar% {
+  sourceCpp("RFunction/Process_S_And_SWAdynamics.cpp")
+  res<-FitParameters(names(dataReindeer$FullDeltaPow)[i],dataReindeer = dataReindeer,RuminationFree = F,RuminationDecreasePS = T)
+  return(res)
+}
+
+
+fitsReindeer_RFf_RDf <- foreach(i = 1:11,.packages=c("optimx","Rcpp"),.noexport = "SWA_Simulation") %dopar% {
+  sourceCpp("RFunction/Process_S_And_SWAdynamics.cpp")
+  res<-FitParameters(names(dataReindeer$FullDeltaPow)[i],dataReindeer = dataReindeer,RuminationFree = F,RuminationDecreasePS = F)
+  return(res)
+}
+
+fitsReindeer_RFt_RDt<- foreach(i = 1:11,.packages=c("optimx","Rcpp"),.noexport = "SWA_Simulation") %dopar% {
+  sourceCpp("RFunction/Process_S_And_SWAdynamics.cpp")
+  res<-FitParameters(names(dataReindeer$FullDeltaPow)[i],dataReindeer = dataReindeer,RuminationFree = T,RuminationDecreasePS = T)
+  return(res)
+}
+
+
+fitsReindeer_RFt_RDf <- foreach(i = 1:11,.packages=c("optimx","Rcpp"),.noexport = "SWA_Simulation") %dopar% {
+  sourceCpp("RFunction/Process_S_And_SWAdynamics.cpp")
+  res<-FitParameters(names(dataReindeer$FullDeltaPow)[i],dataReindeer = dataReindeer,RuminationFree = T,RuminationDecreasePS = F)
+  return(res)
+}
+
+
+stopCluster(cl)
+
+```
+
+
+# Plots
+
+## Increase or Decrease Process-S  {.tabset}
+
+### MSE-BIC 
+
+Does the rumination increase or decrease process-S
+
+```{r,fig.width=6,fig.height=4}
+par(mfrow=c(1,2))
+par(mar=c(2,5,2,2))
+
+meanRum<-sapply(names(dataReindeer$SWdf),function(x){sum(dataReindeer$SWdf[[x]]$Rumination)})
+
+# MSE
+dd<-cbind.data.frame(sapply(fitsReindeer_RFf_RDt,function(x){sqrt(x$RSS/x$n)}),
+                     sapply(fitsReindeer_RFf_RDf,function(x){sqrt(x$RSS/x$n)}))
+
+plot(dd[,1]-dd[,2],pch=19,xlab="Reindeers",ylab="Negative value support\nRumination is like sleep",main="diff MSE",col= as.factor(mm$Season),cex=meanRum/5);abline(a=0,b=0,col="red")
+# t.test(dd[,1]-dd[,2],alternative = "less")
+# wilcox.test(dd[,1]-dd[,2],alternative = "less")
+# wtd.t.test(dd[,1]-dd[,2],weight = meanRum)
+
+# BIC
+dd<-cbind.data.frame(sapply(fitsReindeer_RFf_RDt,GetBIC),
+                     sapply(fitsReindeer_RFf_RDf,GetBIC))
+
+plot(dd[,1]-dd[,2],pch=19,xlab="Reindeers",ylab="Negative value support\nRumination is like sleep",main="diff BIC",col= as.factor(mm$Season),cex=meanRum/5);abline(a=0,b=0,col="red")
+wtd.t.test(dd[,1]-dd[,2],weight = meanRum)
+# t.test(dd[,1]-dd[,2],alternative = "less")
+# wilcox.test(dd[,1]-dd[,2],alternative = "less")
+
+# BIC rum free
+dd<-cbind.data.frame(sapply(fitsReindeer_RFt_RDt,GetBIC),
+                     sapply(fitsReindeer_RFt_RDf,GetBIC))
+
+plot(dd[,1]-dd[,2],pch=19,xlab="Reindeers",ylab="Negative value support\nRumination is like sleep",main="diff BIC",col= as.factor(mm$Season),cex=meanRum/5);abline(a=0,b=0,col="red")
+wtd.t.test(dd[,1]-dd[,2],weight = meanRum)
+```
+
+### Around Rumination episods:
+
+```{r,fig.width=8,fig.height=8}
+GetRSSAroundRum<-function(Deerid,fittedRes,fittedRes2){
+  Episodes<-RumSleepEp$episodes.sleep.rum
+  RSS<-c()
+  RSS2<-c()
+  par(mfcol=c(4,2))
+  par(mar=c(2,3,1,1))
+  for (j in which(Episodes[,1] == Deerid)){
+    fitt<-fittedRes[[Deerid]]$fitted$SWAdynamics[Episodes[j,2]:Episodes[j,3]]
+    fitt2<-fittedRes2[[Deerid]]$fitted$SWAdynamics[Episodes[j,2]:Episodes[j,3]]
+    obs<-dataReindeer$FullDeltaPow[[Deerid]]$SWA[Episodes[j,2]:Episodes[j,3]]
+    RSS<-c(RSS,sum((fitt-obs)^2,na.rm=T))
+    RSS2<-c(RSS2,sum((fitt2-obs)^2,na.rm=T))
+    
+    plot(dataReindeer$FullDeltaPow[[Deerid]]$Time[Episodes[j,2]:Episodes[j,3]],
+         dataReindeer$FullDeltaPow[[Deerid]]$SWA[Episodes[j,2]:Episodes[j,3]],type="l",col=rgb(0,0,0,.2),
+         main=paste("Deer:",Deerid,"",round(sum((fitt-obs)^2,na.rm=T),2),round(sum((fitt2-obs)^2,na.rm=T),2)),xaxt="n",xlab="",ylab="")
+    lines(dataReindeer$FullDeltaPow[[Deerid]]$Time[Episodes[j,2]:Episodes[j,3]],fitt,col="blue")
+    lines(dataReindeer$FullDeltaPow[[Deerid]]$Time[Episodes[j,2]:Episodes[j,3]],
+          fittedRes[[Deerid]]$fitted$ProcessS[Episodes[j,2]:Episodes[j,3]],col="red")
+    lines(dataReindeer$FullDeltaPow[[Deerid]]$Time[Episodes[j,2]:Episodes[j,3]],fitt2,col="skyblue")
+    lines(dataReindeer$FullDeltaPow[[Deerid]]$Time[Episodes[j,2]:Episodes[j,3]],
+          fittedRes2[[Deerid]]$fitted$ProcessS[Episodes[j,2]:Episodes[j,3]],col="pink")
+    
+    
+    plot(dataReindeer$FullDeltaPow[[Deerid]]$Time[Episodes[j,2]:Episodes[j,3]][!is.na(obs)],
+         cumsum(na.omit((fitt-obs)^2)),type="l",col="blue",ylab="",main="cumsum of residuals")
+    lines(dataReindeer$FullDeltaPow[[Deerid]]$Time[Episodes[j,2]:Episodes[j,3]][!is.na(obs)],
+         cumsum(na.omit((fitt2-obs)^2)),type="l",col="skyblue")
+  }
+  return(c(sum(RSS),sum(RSS2)))
+}
+
+rr<-sapply(seq(1,11),GetRSSAroundRum,fittedRes=fitsReindeer_RFf_RDt,fittedRes2=fitsReindeer_RFf_RDf)
+# dd<-cbind(sapply(seq(1,11),GetRSSAroundRum,fittedRes=fitsReindeer_RFf_RDt),
+#           sapply(seq(1,11),GetRSSAroundRum,fittedRes=fitsReindeer_RFf_RDf))
+# 
+# plot(dd[,1]-dd[,2],pch=19,xlab="Reindeers",ylab="Negative value support\nRumination is like sleep",main="diff MSE",col= as.factor(mm$Season),cex=meanRum/5);abline(a=0,b=0,col="red")
+```
+
+
+## Tau is free ?
+
+Should we let tau be free ?
+
+```{r,fig.width=6,fig.height=4}
+par(mfrow=c(1,2))
+par(mar=c(2,5,2,2))
+
+# MSE
+dd<-cbind.data.frame(sapply(fitsReindeer_RFt_RDt,function(x){sqrt(x$RSS/x$n)}),
+                     sapply(fitsReindeer_RFf_RDt,function(x){sqrt(x$RSS/x$n)}))
+
+plot(dd[,1]-dd[,2],pch=19,xlab="Reindeers",ylab="Negative value support\nRumination is free",main="diff MSE",col= as.factor(mm$Season),cex=meanRum/5);abline(a=0,b=0,col="red")
+#wtd.t.test(dd[,1]-dd[,2],weight = meanRum)
+
+# BIC
+dd<-cbind.data.frame(sapply(fitsReindeer_RFt_RDt,GetBIC),
+                     sapply(fitsReindeer_RFf_RDt,GetBIC))
+
+plot(dd[,1]-dd[,2],pch=19,xlab="Reindeers",ylab="Negative value support\nRumination is free",main="diff BIC",col= as.factor(mm$Season),cex=meanRum/5);abline(a=0,b=0,col="red")
+wtd.t.test(dd[,1]-dd[,2],weight = meanRum)
+```
+
+# Parameters
+
+
+```{r,fig.width=4,fig.height=4}
+library(reshape2)
+dd<-as.matrix(t(sapply(fitsReindeer_RFf_RDt,function(x){as.numeric(x$fits)})))
+colnames(dd)<-names(fitsReindeer_RFf_RDt[[1]]$fits)
+dd<-melt(dd)
+ggplot(aes(x=Var2,y=value),data=dd)+geom_boxplot()+scale_y_continuous(trans="log10")+theme_classic()+theme(axis.text.x = element_text(angle=45,hjust = 1,vjust = 1))
+
+```
+
+
+```{r,fig.width=3,fig.height=3}
+library(reshape2)
+mm<-read.table("../data/metadata.txt",header=T)
+dd<-as.matrix(t(sapply(fitsReindeer_RFf_RDt,function(x){as.numeric(x$fits)})))
+colnames(dd)<-names(fitsReindeer_RFf_RDt[[1]]$fits)
+dd<-melt(dd)
+
+dd$Ind<-as.factor(mm[dd$Var1,2])
+dd$Season<-mm[dd$Var1,3]
+
+ggplot(aes(x=Var2,y=value,color=Season,shape=Ind),data=dd)+geom_point()+scale_y_continuous(trans="log10")+theme_classic()+theme(axis.text.x = element_text(angle=45,hjust = 1,vjust = 1))
+
+library(lmerTest)
+for (i in unique(dd$Var2)){
+  ggp<-ggplot(aes(x=Season,y=value,color=Ind),data=dd[dd$Var2 == i,])+geom_point(size=2)+geom_line(aes(group = Ind),data=dd[dd$Var2 == i,])+theme_classic()+theme(axis.text.x = element_text(angle=45,hjust = 1,vjust = 1))+ggtitle(i)
+  print(ggp)
+  
+  if (var(dd[dd$Var2 == i,"value"])>0){
+    print(i)
+    print(anova(lmer(value~Season+(1|Ind),data=dd[dd$Var2 == i,])))
+    print(summary(aov(value~Season+Error(factor(Ind)),data=dd[dd$Var2 == i,])))
+  }
+
+  
+}
+```
+
+# Plot fit
+
+
+```{r,fig.width=12,fig.height=8}
+library(patchwork)
+PlotReindeer<-function(fitsReindeer,i= NULL,xlim=NULL){
+  if (is.null(xlim)){xlim<-c(0,36)}
+  if (is.null(i)){
+    for (i in 1:length(fitsReindeer)){
+      
+      
+      
+      SWAsimu<-fitsReindeer[[i]]$fitted
+      
+      dd<-cbind.data.frame(Time=SWAsimu$time,ProcessS=SWAsimu$ProcessS[-1],SWA=SWAsimu$SWAdynamics[-1])
+      dd<-melt(dd,measure.vars = c(2,3))
+      
+      gg1<-ggplot(aes(Time,value,color=variable),data=dd)+geom_path()+theme_classic() +xlim(xlim)
+      gg2<-ggplot(aes(Time,SWA),data=dataReindeer$FullDeltaPow[[i]])+geom_path()+theme_classic() +xlim(xlim)
+      gg3<-ggplot(aes(Time,value,color=variable),data=dd[dd$variable == "ProcessS",])+geom_path()+theme_classic() +xlim(xlim)
+      gg4<-ggplot(aes(Time,value,color=variable),data=dd)+geom_path()+theme_classic() +xlim(xlim)+annotate("path",x=dataReindeer$FullDeltaPow[[i]]$Time,y=dataReindeer$FullDeltaPow[[i]]$SWA,color=alpha("black",0.15)) +scale_y_continuous(trans="log10")
+      
+      ggf<-gg3/ gg2 / gg4 +  plot_annotation(title = paste("Ind",i,sep="")) #gg1 /
+      
+      
+     
+      
+      print(ggf)
+    }
+  }else{
+      
+      SWAsimu<-fitsReindeer[[i]]$fitted
+      
+      dd<-cbind.data.frame(Time=SWAsimu$time,ProcessS=SWAsimu$ProcessS[-1],SWA=SWAsimu$SWAdynamics[-1])
+      dd<-melt(dd,measure.vars = c(2,3))
+      
+      gg1<-ggplot(aes(Time,value,color=variable),data=dd)+geom_path()+theme_classic() +xlim(xlim)
+      gg2<-ggplot(aes(Time,SWA),data=dataReindeer$FullDeltaPow[[i]])+geom_path()+theme_classic() +xlim(xlim)
+      gg3<-ggplot(aes(Time,value,color=variable),data=dd[dd$variable == "ProcessS",])+geom_path()+theme_classic() +xlim(xlim)
+      gg4<-ggplot(aes(Time,value,color=variable),data=dd)+geom_path()+theme_classic() +xlim(xlim)+annotate("path",x=dataReindeer$FullDeltaPow[[i]]$Time,y=dataReindeer$FullDeltaPow[[i]]$SWA,color=alpha("black",0.15)) +scale_y_continuous(trans="log10",limits=c(0.1,10))
+      
+      ggf<-gg3/ gg2 / gg4 +  plot_annotation(title = paste("Ind",i,sep="")) #gg1 /
+      
+      
+     
+      
+      print(ggf)
+  }
+
+}
+PlotReindeer(fitsReindeer_RFf_RDt,xlim=c(80,85),i=1) 
+PlotReindeer(fitsReindeer_RFf_RDt,xlim=c(0,5),i=1)
+
+PlotReindeer(fitsReindeer_RFf_RDt,xlim=c(80,85),i=2) 
+PlotReindeer(fitsReindeer_RFf_RDt,xlim=c(0,5),i=2)
+
+PlotReindeer(fitsReindeer_RFf_RDt,xlim=c(80,85),i=3) 
+PlotReindeer(fitsReindeer_RFf_RDt,xlim=c(0,5),i=3)
+
+PlotReindeer(fitsReindeer_RFf_RDt,xlim=c(80,85),i=4) 
+PlotReindeer(fitsReindeer_RFf_RDt,xlim=c(0,5),i=4)
+
+PlotReindeer(fitsReindeer_RFf_RDt,xlim=c(80,85),i=11) 
+PlotReindeer(fitsReindeer_RFf_RDt,xlim=c(0,5),i=11)
+
+PlotReindeer(fitsReindeer_RFf_RDt,xlim=c(46,90),i=1) 
+PlotReindeer(fitsReindeer_RFf_RDt,xlim=c(0,5),i=10)
+#PlotReindeer(fitsReindeer_RFt_RDt)
+```
+
+
+# Simulation
+
+```{r}
+NREMepisod<-c(rep(0/3600,300),rep(4/3600,300))
+Wakeepisod<-c(rep(4/3600,300),rep(0/3600,300))
+
+mm<-read.table("../data/metadata.txt",header=T)
+dd<-as.matrix(t(sapply(fitsReindeer_RFf_RDt,function(x){as.numeric(x$fits)})))
+colnames(dd)<-names(fitsReindeer_RFf_RDt[[1]]$fits)
+dd<-melt(dd)
+
+dd$Ind<-as.factor(mm[dd$Var1,2])
+dd$Season<-mm[dd$Var1,3]
+dd<-dd[- which(dd$Ind == 2 & dd$Season == "Dec"),]
+
+
+
+SWAsimuDec<-SWA_Simulation(NREM = NREMepisod,Wake = Wakeepisod,
+                          Rumination = rep(0,600),Time = cumsum(rep(4/3600,600)),
+                          U = ULIMITS,L=mean(dd$value[dd$Var2 == "L" & dd$Season == "Dec"]),
+                          tau_wake=mean(dd$value[dd$Var2 == "tau_wake" & dd$Season == "Dec"]),
+                          tau_nrem = mean(dd$value[dd$Var2 == "tau_nrem" & dd$Season == "Dec"]),tau_rumination = 1 ,
+                          tau_swa_synchro = mean(dd$value[dd$Var2 == "tau_swa_synchro" & dd$Season == "Dec"]),
+                          tau_swa_desynchro = mean(dd$value[dd$Var2 == "tau_swa_desynchro" & dd$Season == "Dec"]),
+                          L_swa = mean(dd$value[dd$Var2 == "L" & dd$Season == "Dec"]),init_ProcessS = 1,
+                          init_SWA = 1,RuminationDecreasePS = T)
+SWAsimuJul<-SWA_Simulation(NREM = NREMepisod,Wake = Wakeepisod,
+                          Rumination = rep(0,600),Time = cumsum(rep(4/3600,600)),
+                          U = ULIMITS,L=mean(dd$value[dd$Var2 == "L" & dd$Season == "Jul"]),
+                          tau_wake=mean(dd$value[dd$Var2 == "tau_wake" & dd$Season == "Jul"]),
+                          tau_nrem = mean(dd$value[dd$Var2 == "tau_nrem" & dd$Season == "Jul"]),tau_rumination = 1 ,
+                          tau_swa_synchro = mean(dd$value[dd$Var2 == "tau_swa_synchro" & dd$Season == "Jul"]),
+                          tau_swa_desynchro = mean(dd$value[dd$Var2 == "tau_swa_desynchro" & dd$Season == "Jul"]),
+                          L_swa = mean(dd$value[dd$Var2 == "L" & dd$Season == "Jul"]),init_ProcessS = 1,
+                          init_SWA = 1,RuminationDecreasePS = T)
+
+SWAsimuSep<-SWA_Simulation(NREM = NREMepisod,Wake = Wakeepisod,
+                          Rumination = rep(0,600),Time = cumsum(rep(4/3600,600)),
+                          U =ULIMITS,L=mean(dd$value[dd$Var2 == "L" & dd$Season == "Sep"]),
+                          tau_wake=mean(dd$value[dd$Var2 == "tau_wake" & dd$Season == "Sep"]),
+                          tau_nrem = mean(dd$value[dd$Var2 == "tau_nrem" & dd$Season == "Sep"]),tau_rumination = 1 ,
+                          tau_swa_synchro = mean(dd$value[dd$Var2 == "tau_swa_synchro" & dd$Season == "Sep"]),
+                          tau_swa_desynchro = mean(dd$value[dd$Var2 == "tau_swa_desynchro" & dd$Season == "Sep"]),
+                          L_swa = mean(dd$value[dd$Var2 == "L" & dd$Season == "Sep"]),init_ProcessS = 1,
+                          init_SWA = 1,RuminationDecreasePS = T)
+
+
+
+
+
+
+SWAsimu<-SWAsimuSep
+ddDec<-cbind.data.frame(Time=SWAsimuDec$time,ProcessS=SWAsimuDec$ProcessS[-1],SWA=SWAsimuDec$SWAdynamics[-1])
+ddDec<-melt(ddDec,measure.vars = c(2,3))
+ddDec$Season<-"Dec"
+
+ddJul<-cbind.data.frame(Time=SWAsimuJul$time,ProcessS=SWAsimuJul$ProcessS[-1],SWA=SWAsimuJul$SWAdynamics[-1])
+ddJul<-melt(ddJul,measure.vars = c(2,3))
+ddJul$Season<-"Jul"
+
+ddSep<-cbind.data.frame(Time=SWAsimuSep$time,ProcessS=SWAsimuSep$ProcessS[-1],SWA=SWAsimuSep$SWAdynamics[-1])
+ddSep<-melt(ddSep,measure.vars = c(2,3))
+ddSep$Season<-"Sep"
+
+dd<-rbind.data.frame(ddDec,ddJul,ddSep)
+dd$Time<-dd$Time * 60 # Transform in minutes
+gg1<-ggplot(aes(Time,value,color=variable,linetype=Season),data=dd)+geom_path()+theme_classic() + xlab("Time [min]")+scale_linetype_manual(values=c("Dec"="solid","Jul"="dotted","Sep"="dashed"))
+gg1
+
+
+ddSimu<-dd
+  
+```
+
+# Write data
+
+```{r}
+library(R.matlab)
+dataMat<-readMat("../data/matfiles_swa_std_processS/SWA_scoring_episodes_BLnorm.mat")
+dataMat$SWA.fitted<-t(sapply(seq(1,11),function(x){fitsReindeer_RFf_RDt[[x]]$fitted$SWAdynamics}))
+dataMat$ProcessS.fitted<-t(sapply(seq(1,11),function(x){fitsReindeer_RFf_RDt[[x]]$fitted$ProcessS}))
+
+fitsReindeer_RFf_RDt_RumWN<-fitsReindeer_RFf_RDt
+mm<-read.table("../data/metadata.txt",header=T)
+
+mm$x<-c(1,1,1,1,1,1,1,1,1,1,1)
+mm$meanRum<-sapply(names(dataReindeer$SWdf),function(x){sum(dataReindeer$SWdf[[x]]$Rumination)})
+mm$BIC_RumDec_Free<-sapply(fitsReindeer_RFt_RDt,GetBIC)
+mm$BIC_RumDec_Fix<-sapply(fitsReindeer_RFf_RDt,GetBIC)
+mm$BIC_RumInc_Free<-sapply(fitsReindeer_RFt_RDf,GetBIC)
+mm$BIC_RumInc_Fix<-sapply(fitsReindeer_RFf_RDf,GetBIC)
+				 
+#dd<-cbind.data.frame(sapply(fitsReindeer_RFf_RDt,function(x){sqrt(x$RSS/x$n)}),
+                     #sapply(fitsReindeer_RFf_RDf,function(x){sqrt(x$RSS/x$n)}))	
+#mm$DeltaMSE_RumDec_Fix<-dd[,1]-dd[,2]
+dd<-cbind.data.frame(sapply(fitsReindeer_RFf_RDt,GetBIC),
+                     sapply(fitsReindeer_RFf_RDf,GetBIC))
+mm$DeltaBIC_RumDec_Fix<-dd[,1]-dd[,2]
+dd<-cbind.data.frame(sapply(fitsReindeer_RFt_RDt,GetBIC),
+                     sapply(fitsReindeer_RFt_RDf,GetBIC))
+mm$DeltaBIC_RumDec_Free<-dd[,1]-dd[,2]
+#dd<-cbind.data.frame(sapply(fitsReindeer_RFt_RDt,function(x){sqrt(x$RSS/x$n)}),
+                     #sapply(fitsReindeer_RFf_RDt,function(x){sqrt(x$RSS/x$n)}))	
+#mm$DeltaMSE_RumFree<-dd[,1]-dd[,2]
+dd<-cbind.data.frame(sapply(fitsReindeer_RFt_RDt,GetBIC),
+                     sapply(fitsReindeer_RFf_RDt,GetBIC))
+mm$DeltaBIC_RumFree<-dd[,1]-dd[,2]
+
+mm$parameters_L<-sapply(seq(1,11),function(x){fitsReindeer_RFf_RDt[[x]]$fits$L})
+mm$parameters_tauWake<-sapply(seq(1,11),function(x){fitsReindeer_RFf_RDt[[x]]$fits$tau_wake})
+mm$parameters_tauNREM<-sapply(seq(1,11),function(x){fitsReindeer_RFf_RDt[[x]]$fits$tau_nrem})
+mm$parameters_tau_swa_synchro<-sapply(seq(1,11),function(x){fitsReindeer_RFf_RDt[[x]]$fits$tau_swa_synchro})
+mm$parameters_tau_swa_desynchro<-sapply(seq(1,11),function(x){fitsReindeer_RFf_RDt[[x]]$fits$tau_swa_desynchro})
+mm$parameters_init_PS<-sapply(seq(1,11),function(x){fitsReindeer_RFf_RDt[[x]]$fits$init_PS})
+
+write.table(mm,"../docs/Stats&Params_BLnorm.txt",col.names = T,row.names = F,quote = F,sep="\t")
+write.table(ddSimu,"../docs/SimulationSeason_BLnorm.txt",col.names = T,row.names = F,quote = F,sep="\t")
+
+writeMat("../docs/FittedResults_BLnorm.mat",
+         SWA.absolute = dataMat$SWA.absolute,
+         SWA.normalized = dataMat$SWA.normalized,
+         episodes = dataMat$episodes,
+         filenames = dataMat$filenames,
+         scoring = dataMat$scoring,
+         scoring.rumwn = dataMat$scoring.rumwn,
+         spindles.all = dataMat$spindles.all,
+         SWA.fitted = dataMat$SWA.fitted,
+         ProcessS.fitted = dataMat$ProcessS.fitted)
+
+```
+

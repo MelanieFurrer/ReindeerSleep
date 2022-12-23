@@ -1,0 +1,262 @@
+---
+title: "Process Data Reindeer"
+author: "Maxime Jan"
+date: '`r Sys.Date()`'
+output:
+  html_document:
+    code_folding: show
+    df_print: paged
+    fig_caption: yes
+    highlight: tango
+    number_sections: no
+    theme: united
+    toc: yes
+    toc_depth: 4
+    rows.print: 6
+    toc_float: yes
+  pdf_document:
+    fig_caption: yes
+  word_document:
+    toc: yes
+    toc_depth: '4'
+---
+
+# LIBS
+
+```{r}
+setwd("C:/Users/schlaf/Documents/reindeer/Data_Analysis_main_experiment/RDsleepAnalysis/R/Z_processS/analysis")
+# Install if not available !
+library(R.matlab)
+library(ggplot2)
+source("RFunction/DataProcessing.R")
+```
+
+# Read Input
+
+Read matlab file in data directory
+
+```{r}
+## Old file given
+# dataMat<-readMat("../data/matfiles_swa_std_processS/SWA_STD_all.mat")
+# names(dataMat)
+
+# dataMat<-readMat("../data/matfiles_swa_std_processS/SWA_STD_episodes_all.mat")
+# names(dataMat)
+# 
+# dataMat2<-readMat("../data/matfiles_swa_std_processS/SWA_STD_episodes_allnew.mat")
+# names(dataMat2)
+
+#dataMat<-readMat("../data/matfiles_swa_std_processS/SWA_STD_episodes_all_rumwn.mat")
+#dataMat<-readMat("../data/matfiles_swa_std_processS/SWA_STD_episodes_newnormalization.mat")
+
+# More recent !
+
+dataMat<-readMat("../data/matfiles_swa_std_processS/SWA_scoring_episodes_dark.mat")
+RumSleepEp<-readMat("../data/matfiles_swa_std_processS/episodes_sleep_rum.mat")
+names(dataMat)
+```
+
+From Melanie Furer:
+
+I uploaded a new file "SWA_STD_episodes_all_rumwn.mat" with a new variable "scoring_rumwn", where I replaced the labels for rumination (4 and t) in a way that now 4 corresponds to "rum-wake" and t to "rum-sleep" based on spindle density criteria. The variable "spindles_all" has the number of spindles detected per 4s-epoch (only for rumination, the rest are NaN), just in case you can use that info too.
+
+
+```{r}
+# Transform 'wrnwnr' into 'w','r','n'...
+Scoring<-apply(dataMat$scoring,1,function(x){
+  return(strsplit(x,"")[[1]])
+})
+
+# Old scoring containing RUMW and RUMN, keep if you want to reuse it ! 
+ScoringRUMWN<-Scoring
+# ScoringRUMWN<-apply(dataMat$scoring.rumwn,1,function(x){
+#   return(strsplit(x,"")[[1]])
+# })
+```
+
+## Filtering old file
+
+eval=F -> these functions are not runned .
+
+Some scoring don't have 81900 scores (old file, not anymore in the new one)
+
+```{r,eval=F}
+sapply(Scoring,length)
+```
+
+merge good results
+
+```{r,eval=F}
+idx_good<-which(sapply(Scoring,length) == 81900)
+```
+
+Some score have a ' why ? 
+
+```{r,eval=F}
+Scorematrix<-do.call("cbind",Scoring[idx_good])
+colnames(Scorematrix)<-paste("Ind",idx_good,sep="")
+dataMat$SWA.absolute<-t(dataMat$SWA.absolute[idx_good,])
+colnames(dataMat$SWA.absolute)<-paste("Ind",idx_good,sep="")
+dataMat$SWA.normalized<-t(dataMat$SWA.normalized[idx_good,])
+colnames(dataMat$SWA.normalized)<-paste("Ind",idx_good,sep="")
+table(Scorematrix)
+```
+
+
+## Process new file
+
+
+```{r}
+Scorematrix<-Scoring
+colnames(Scorematrix)<-paste("Ind",1:ncol(Scorematrix),sep="")
+dataMat$SWA.absolute<-t(dataMat$SWA.absolute)
+colnames(dataMat$SWA.absolute)<-paste("Ind",1:ncol(Scorematrix),sep="")
+dataMat$SWA.normalized<-t(dataMat$SWA.normalized)
+colnames(dataMat$SWA.normalized)<-paste("Ind",1:ncol(Scorematrix),sep="")
+table(Scorematrix)
+```
+
+```{r}
+ScorematrixRUMWN<-ScoringRUMWN
+colnames(ScorematrixRUMWN)<-paste("Ind",1:ncol(ScorematrixRUMWN),sep="")
+table(ScorematrixRUMWN)
+```
+
+# Quantify scoring
+
+Visualization, mean per 3600 seconds
+
+```{r,fig.width=4,fig.height=10}
+Mean_SWdf<-ReadReindeerScoring(Scorematrix,nepochs=81900, concattimesec = 3600,concat = "mean")
+par(mfcol=c(4,1))
+plot(Mean_SWdf$NREM);lines(Mean_SWdf$NREM)
+plot(Mean_SWdf$REM);lines(Mean_SWdf$REM)
+plot(Mean_SWdf$Wake);lines(Mean_SWdf$Wake)
+plot(Mean_SWdf$Rumination);lines(Mean_SWdf$Rumination)
+
+Mean_SWdf_RUMWN<-ReadReindeerScoring(ScorematrixRUMWN,nepochs=81900, concattimesec = 3600,concat = "mean",rumWN = T)
+par(mfrow=c(5,1))
+plot(Mean_SWdf_RUMWN$NREM);lines(Mean_SWdf_RUMWN$NREM)
+plot(Mean_SWdf_RUMWN$REM);lines(Mean_SWdf_RUMWN$REM)
+plot(Mean_SWdf_RUMWN$Wake);lines(Mean_SWdf_RUMWN$Wake)
+plot(Mean_SWdf_RUMWN$RuminationS);lines(Mean_SWdf_RUMWN$RuminationS)
+plot(Mean_SWdf_RUMWN$RuminationW);lines(Mean_SWdf_RUMWN$RuminationW)
+```
+
+
+See data for Ind1 on multiple intervals
+
+```{r,eval=F}
+aa<-ReadReindeerScoring(Scorematrix[,1,drop=F],nepochs=81900, concattimesec = 4,concat = "mean")
+
+pdf(file="../docs/Reindeer.pdf")
+plot(dataMat$SWA.normalized[,1],type="l",xlim=c(1300,1800),ylim=c(-3,8),xaxt="n")
+axis(1,seq(0,81900,by=90),labels = round(seq(0,81900,by=90)/900,1))
+lines(200*aa$Wake,col="blue")
+lines(-1+200*aa$NREM,col="red")
+lines(-2+200*aa$REM,col="green")
+lines(-3+200*aa$Rumination,col="purple")
+
+
+plot(dataMat$SWA.normalized[,1],xlim=c(43800,44260),type="l",ylim=c(-3,8),xaxt="n")
+axis(1,seq(0,81900,by=90),labels = round(seq(0,81900,by=90)/900,1))
+
+lines(200*aa$Wake,col="blue")
+lines(-1+200*aa$NREM,col="red")
+lines(-2+200*aa$REM,col="green")
+lines(-3+200*aa$Rumination,col="purple")
+
+
+plot(dataMat$SWA.normalized[,1],xlim=c(81300,81700),type="l",ylim=c(-3,8),xaxt="n")
+axis(1,seq(0,81900,by=90),labels = round(seq(0,81900,by=90)/900,1))
+
+lines(200*aa$Wake,col="blue")
+lines(-1+200*aa$NREM,col="red")
+lines(-2+200*aa$REM,col="green")
+lines(-3+200*aa$Rumination,col="purple")
+
+
+plot(dataMat$SWA.normalized[,1],type="l",ylim=c(-3,8),xaxt="n")
+axis(1,seq(0,81900,by=90),labels = round(seq(0,81900,by=90)/900,1))
+
+lines(200*aa$Wake,col="blue")
+lines(-1+200*aa$NREM,col="red")
+lines(-2+200*aa$REM,col="green")
+lines(-3+200*aa$Rumination,col="purple")
+dev.off()
+```
+
+# Define delta power
+
+Old function to get delta-power as maximum value reach per bout of NREM
+
+black line is a spline, red is an saturating exponential function
+
+```{r}
+tt<-GetMaxSWAperBout(deerid = 1,DoPlot = T)
+plot(tt$Time,tt$SWA,type="l")
+points(tt$Time,tt$SWA)
+```
+
+
+```{r}
+tt<-GetMaxSWAperBout(deerid = 8,DoPlot = T)
+```
+
+
+Get mean SWA in a bout of NREM, as continuous NREM for minboutlength_sec seconds
+
+```{r,fig.width=12,fig.height=3}
+GetSWA4BoutsOfNREM(SWA=dataMat$SWA.normalized[,3],Scoring=Scorematrix[,3],minboutlength_sec=360,epochlengthsec = 4)
+```
+
+
+# Save data 
+
+```{r}
+BoutMinThresh<-30
+Timeconcat<-4
+
+dataReindeer<-list(SWdf=list(),DeltaPow=list(),Episodes=list(),FullDeltaPow=list())
+for (Ind in colnames(Scorematrix)){
+  dataReindeer[["SWdf"]][[Ind]]<-ReadReindeerScoring(Scorematrix[,Ind,drop=F],nepochs=81900, concattimesec = Timeconcat,concat = "mean")
+  
+  #dataReindeer[["DeltaPow"]][[Ind]]<-as.data.frame(GetMaxSWAperBout(as.numeric(gsub("Ind","",Ind,))))
+  #dataReindeer[["DeltaPow"]][[Ind]]<-as.data.frame(GetSWA4BoutsOfNREM(SWA=dataMat$SWA.absolute[,Ind],Scoring=Scorematrix[,Ind],minboutlength_sec=BoutMinThresh,epochlengthsec = 4))
+  
+  # add time
+  dataReindeer[["SWdf"]][[Ind]]$Time<-cumsum(rep(Timeconcat,nrow(dataReindeer[["SWdf"]][[Ind]])))/(3600)
+  dataReindeer[["FullDeltaPow"]][[Ind]]<-cbind.data.frame(SWA=dataMat$SWA.normalized[,Ind],Time=1:nrow(dataMat$SWA.normalized)*4/3600)
+  
+  dataReindeer[["NREMEpisodes"]][[Ind]]<- dataMat$episodes[,,as.numeric(gsub("Ind","",Ind,))]$nremdura
+  
+}
+
+dataReindeerRUMWN<-list(SWdf=list(),DeltaPow=list(),Episodes=list(),FullDeltaPow=list())
+for (Ind in colnames(ScorematrixRUMWN)){
+  
+  dataReindeerRUMWN[["SWdf"]][[Ind]]<-ReadReindeerScoring(ScorematrixRUMWN[,Ind,drop=F],nepochs=81900, concattimesec = Timeconcat,concat = "mean",rumWN = T)
+  
+  #dataReindeerRUMWN[["DeltaPow"]][[Ind]]<-as.data.frame(GetMaxSWAperBout(as.numeric(gsub("Ind","",Ind,))))
+  #dataReindeer[["DeltaPow"]][[Ind]]<-as.data.frame(GetSWA4BoutsOfNREM(SWA=dataMat$SWA.absolute[,Ind],Scoring=Scorematrix[,Ind],minboutlength_sec=BoutMinThresh,epochlengthsec = 4))
+  
+  # add time
+  dataReindeerRUMWN[["SWdf"]][[Ind]]$Time<-cumsum(rep(Timeconcat,nrow(dataReindeerRUMWN[["SWdf"]][[Ind]])))/(3600)
+  dataReindeerRUMWN[["FullDeltaPow"]][[Ind]]<-cbind.data.frame(SWA=dataMat$SWA.normalized[,Ind],Time=1:nrow(dataMat$SWA.normalized)*4/3600)
+  
+  dataReindeerRUMWN[["NREMEpisodes"]][[Ind]]<- dataMat$episodes[,,as.numeric(gsub("Ind","",Ind,))]$nremdura
+  
+}
+```
+
+
+```{r}
+save(dataReindeer,dataReindeerRUMWN,RumSleepEp,file="../data/dataReindeer_processed_dark.Rdata")
+```
+
+
+
+
+
+
+
