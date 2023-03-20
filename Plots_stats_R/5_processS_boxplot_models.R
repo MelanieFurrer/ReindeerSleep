@@ -15,7 +15,7 @@ library(plyr)
 library(patchwork)
 
 
-setwd("C:/Users/schlaf/Documents/reindeer/Data_Analysis_main_experiment/RDsleepAnalysis/R/Z_processS/docs")
+setwd("C:/Users/schlaf/Documents/GitHub/ReindeerSleep/Z_processS/docs")
 
 df<-read.table("Stats&Params_BLnorm.txt",header=T)
 

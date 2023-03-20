@@ -4,7 +4,7 @@ GetParametersLimits<-function(RuminationFree){
   taudesync<-(60*1/3600)/3 # @ 1 minutes, difference from process-S is less than 5%
 
   # Use as initial value for optimization
-  params<-c(L=LLIMITS,tau_wake = 10,tau_nrem = 3,tau_rumination = 3,
+  params<-c(tau_wake = 10,tau_nrem = 3,tau_rumination = 3,
             tau_swa_synchro = tausync,tau_swa_desynchro = taudesync,init_PS=2)
   
   # Limits of SWA time-constant (from 0.1 to 10 minutes)
@@ -15,9 +15,9 @@ GetParametersLimits<-function(RuminationFree){
   
   # Limits of parameters of process-S
   # init_PS: See first episode of NREM sleep in Fit_Reindeer_061022.Rmd
-  lower<-c(L=LLIMITS,tau_wake = .5,tau_nrem = .5,tau_rumination = .5,
+  lower<-c(tau_wake = .5,tau_nrem = .5,tau_rumination = .5,
            tau_swa_synchro = mintaudesync,tau_swa_desynchro = mintaudesync,init_PS=0.1)
-  upper<-c(L=LLIMITS,tau_wake = 30,tau_nrem = 30,tau_rumination = 30,
+  upper<-c(tau_wake = 30,tau_nrem = 30,tau_rumination = 30,
            tau_swa_synchro = 24,tau_swa_desynchro = 24,init_PS=5) 
   
   # log transform as we don't expect negative value
@@ -64,21 +64,21 @@ ObjFun<-function(params,SWA,SWdf,RuminationFree=T,RuminationDecreasePS=T){
   if (RuminationFree == T){
     SWAsimu<-SWA_Simulation(NREM = SWdf$NREM,Wake = SWdf$Wake,
                             Rumination = SWdf$Rumination,Time = SWdf$Time,
-                            U = ULIMITS,L=exp(params["L"]),tau_wake=exp(params["tau_wake"]),
+                            U = ULIMITS,L=LLIMITS,tau_wake=exp(params["tau_wake"]),
                             tau_nrem = exp(params["tau_nrem"]),tau_rumination = exp(params["tau_rumination"]),
                             tau_swa_synchro = exp(params["tau_swa_synchro"]),
                             tau_swa_desynchro = exp(params["tau_swa_desynchro"]),
-                            L_swa = exp(params["L"]),init_ProcessS = exp(params["init_PS"]), #
+                            L_swa = LLIMITS,init_ProcessS = exp(params["init_PS"]), #
                             init_SWA = 1,RuminationDecreasePS = RuminationDecreasePS)
   }else{
     # Rumination is included in Wake or NREM
     SWAsimu<-SWA_Simulation(NREM = SWdf$NREM,Wake = SWdf$Wake,
                             Rumination = SWdf$Rumination,Time = SWdf$Time,
-                            U = ULIMITS,L=exp(params["L"]),tau_wake=exp(params["tau_wake"]),
+                            U = ULIMITS,L=LLIMITS,tau_wake=exp(params["tau_wake"]),
                             tau_nrem = exp(params["tau_nrem"]),tau_rumination = 1,
                             tau_swa_synchro = exp(params["tau_swa_synchro"]),
                             tau_swa_desynchro = exp(params["tau_swa_desynchro"]),
-                            L_swa = exp(params["L"]),init_ProcessS = exp(params["init_PS"]), #
+                            L_swa = LLIMITS,init_ProcessS = exp(params["init_PS"]), #
                             init_SWA = 1,RuminationDecreasePS = RuminationDecreasePS)
   }
   
@@ -116,11 +116,11 @@ FitParameters<-function(Deerid,dataReindeer,RuminationFree=T,RuminationDecreaseP
   if (RuminationFree == T){tau_rum<-exp(fits[1,"tau_rumination"])}else{tau_rum<-1}
   SWAsimu<-SWA_Simulation(NREM = SWdf$NREM,Wake = SWdf$Wake,
                           Rumination = SWdf$Rumination,Time = SWdf$Time,
-                          U = ULIMITS,L=exp(fits[1,"L"]),tau_wake=exp(fits[1,"tau_wake"]),
+                          U = ULIMITS,L=LLIMITS,tau_wake=exp(fits[1,"tau_wake"]),
                           tau_nrem = exp(fits[1,"tau_nrem"]),tau_rumination = tau_rum ,
                           tau_swa_synchro = exp(fits[1,"tau_swa_synchro"]),
                           tau_swa_desynchro = exp(fits[1,"tau_swa_desynchro"]),
-                          L_swa = exp(fits[1,"L"]),init_ProcessS = exp(fits[1,"init_PS"]),
+                          L_swa = LLIMITS,init_ProcessS = exp(fits[1,"init_PS"]),
                           init_SWA = 1,RuminationDecreasePS = RuminationDecreasePS)
   
   appx<-approxfun(x=SWdf$Time,y=(SWAsimu$SWAdynamics[-1]))

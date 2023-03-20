@@ -24,7 +24,7 @@ output:
 # LIBS
 
 ```{r}
-setwd("C:/Users/schlaf/Documents/reindeer/Data_Analysis_main_experiment/RDsleepAnalysis/R/Z_processS/analysis")
+setwd("C:/Users/schlaf/Documents/GitHub/ReindeerSleep/Z_processS/analysis")
 library(Rcpp)
 library(optimx)
 library(reshape2)
@@ -480,7 +480,7 @@ ddSimu<-dd
 
 ```{r}
 library(R.matlab)
-dataMat<-readMat("../data/matfiles_swa_std_processS/SWA_scoring_episodes_BLnorm.mat")
+dataMat<-readMat("C:/Users/schlaf/Documents/reindeer/Data_Analysis_main_experiment/RDsleepAnalysis/R/Z_processS/data/matfiles_swa_std_processS/SWA_scoring_episodes_BLnorm.mat")
 dataMat$SWA.fitted<-t(sapply(seq(1,11),function(x){fitsReindeer_RFf_RDt[[x]]$fitted$SWAdynamics}))
 dataMat$ProcessS.fitted<-t(sapply(seq(1,11),function(x){fitsReindeer_RFf_RDt[[x]]$fitted$ProcessS}))
 
@@ -510,7 +510,7 @@ dd<-cbind.data.frame(sapply(fitsReindeer_RFt_RDt,GetBIC),
                      sapply(fitsReindeer_RFf_RDt,GetBIC))
 mm$DeltaBIC_RumFree<-dd[,1]-dd[,2]
 
-mm$parameters_L<-sapply(seq(1,11),function(x){fitsReindeer_RFf_RDt[[x]]$fits$L})
+#mm$parameters_L<-sapply(seq(1,11),function(x){fitsReindeer_RFf_RDt[[x]]$fits$L})
 mm$parameters_tauWake<-sapply(seq(1,11),function(x){fitsReindeer_RFf_RDt[[x]]$fits$tau_wake})
 mm$parameters_tauNREM<-sapply(seq(1,11),function(x){fitsReindeer_RFf_RDt[[x]]$fits$tau_nrem})
 mm$parameters_tau_swa_synchro<-sapply(seq(1,11),function(x){fitsReindeer_RFf_RDt[[x]]$fits$tau_swa_synchro})

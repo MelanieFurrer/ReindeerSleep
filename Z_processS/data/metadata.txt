@@ -1,0 +1,12 @@
+RID	Individual	Season
+1	2	Dec
+2	2	Jul
+3	2	Sep
+4	3	Dec
+5	3	Jul
+6	3	Sep
+7	5	Jul
+8	5	Sep
+9	6	Dec
+10	6	Jul
+11	6	Sep	
