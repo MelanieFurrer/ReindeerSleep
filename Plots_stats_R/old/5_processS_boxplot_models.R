@@ -112,122 +112,19 @@ anova(m)
 m <- lmer(parameters_tauNREM ~ season + (1|reindeer), data=df)
 anova(m)
 
+m <- lmer(parameters_tau_swa_synchro ~ season + (1|reindeer), data=df)
+anova(m)
+
+m <- lmer(parameters_tau_swa_desynchro ~ season + (1|reindeer), data=df)
+anova(m)
 
 
-
-m1 <- lmer(parameters_tau_swa_synchro ~ season + (1|reindeer), data=df)
-anova(m1)
-emmeans(m1, pairwise ~ season, adjust = "tukey")
-
-m2 <- lmer(parameters_tau_swa_desynchro ~ season + (1|reindeer), data=df)
-anova(m2)
-emmeans(m2, pairwise ~ season, adjust = "tukey")
-
-
-
-#####significant ones#####
-
-
-setwd("C:/Users/schlaf/Documents/reindeer/Data_Analysis_main_experiment/Results/processS")
-tiff("PS_SuppFig_synchro.png", units="in", width=5, height=6, res=300)
-
-ggplot(df , aes(x=season, y=parameters_tau_swa_synchro)) +
-  stat_boxplot(coef=2,alpha=0.3)+
-  geom_boxplot(alpha=0.2)+
-  geom_point(size=5)+
-  geom_line(aes(group = reindeer))+
-  theme_bw()+
-  theme(text = element_text(size=20),axis.text.y = element_text(size=18,color="black",hjust = 0.5),axis.text.x = element_text(size=20,color="black",vjust = .5),axis.title.x=element_blank())+
-  ylim(0.018,0.055)+
-  ylab("Time constant for synchronization of SWA")+
-  scale_x_discrete(labels= c("Winter","Summer","Fall"))
-
-dev.off()
-
-
-setwd("C:/Users/schlaf/Documents/reindeer/Data_Analysis_main_experiment/Results/processS")
-tiff("PS_SuppFig_desynchro.png", units="in", width=5.15, height=6, res=300)
-
-ggplot(df , aes(x=season, y=parameters_tau_swa_desynchro)) +
-  stat_boxplot(coef=2,alpha=0.3)+
-  geom_boxplot(alpha=0.2)+
-  geom_point(size=5)+
-  geom_line(aes(group = reindeer))+
-  theme_bw()+
-  theme(text = element_text(size=20),axis.text.y = element_text(size=18,color="black",hjust = 0.5),axis.text.x = element_text(size=20,color="black",vjust = .5),axis.title.x=element_blank())+
-  ylim(0.0013,0.014)+
-  ylab("Time constant for desynchronization of SWA")+
-  scale_x_discrete(labels= c("Winter","Summer","Fall"))
-
-dev.off()
-
-
-
-#####and the rest#####
-
-
-ggplot(df , aes(x=season, y=parameters_tauWake)) +
-  stat_boxplot(coef=2,alpha=0.3)+
-  geom_boxplot(alpha=0.2)+
-  geom_point(size=5)+
-  geom_line(aes(group = reindeer))+
-  theme_bw()+
-  theme(text = element_text(size=20),axis.text.y = element_text(size=18,color="black",hjust = 0.5),axis.text.x = element_text(size=20,color="black",vjust = .5),axis.title.x=element_blank())+
-  scale_x_discrete(labels= c("Winter","Summer","Fall"))
+boxplot(df$parameters_tau_swa_desynchro ~ df$season)
 
 
 
 
-ggplot(df , aes(x=season, y=parameters_tauNREM)) +
-  stat_boxplot(coef=2,alpha=0.3)+
-  geom_boxplot(alpha=0.2)+
-  geom_point(size=5)+
-  geom_line(aes(group = reindeer))+
-  theme_bw()+
-  theme(text = element_text(size=20),axis.text.y = element_text(size=18,color="black",hjust = 0.5),axis.text.x = element_text(size=20,color="black",vjust = .5),axis.title.x=element_blank())+
-  scale_x_discrete(labels= c("Winter","Summer","Fall"))
 
-
-
-##### try out how to find asymptotes for modeling ########
-
-max_SWA <- c()
-
-for (x in 1:11) {
-  
-  max_SWA[x] <- quantile(na.omit(dataReindeer$FullDeltaPow[[x]]$SWA),prob=0.99, names = FALSE)
-  
-}
-
-
-
-print(max_SWA)
-
-mean(max_SWA)
-
-
-mean_SWA <- c()
-
-for (x in 1:11) {
-  
-  mean_SWA[x] <- mean(na.omit(dataReindeer$FullDeltaPow[[x]]$SWA))
-  
-}
-
-print(mean_SWA)
-
-
-
-median_SWA <- c()
-
-for (x in 1:11) {
-  
-  median_SWA[x] <- median(na.omit(dataReindeer$FullDeltaPow[[x]]$SWA))
-  
-}
-
-print(median_SWA)
-mean(median_SWA)
 
 
 
