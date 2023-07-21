@@ -153,3 +153,24 @@ dev.off()
 
 
 
+
+
+## models for timepoints separately
+
+
+model1 <- lmer(SWA ~ timewindow * season + (1|reindeer), data=subset(df, timewindow== 1 & timepoint== "midday" | timewindow== 2 & timepoint== "midday"))
+anova(model1)
+
+
+model1 <- lmer(SWA ~ timewindow * season + (1|reindeer), data=subset(df, timewindow== 1 & timepoint== "midnight" | timewindow== 2 & timepoint== "midnight"))
+anova(model1)
+
+
+model1 <- lmer(SWA ~ timewindow * season + (1|reindeer), data=subset(df, timewindow== 3 & timepoint== "midday" | timewindow== 4 & timepoint== "midday"| timewindow== 2 & timepoint== "midday"))
+anova(model1)
+
+
+model1 <- lmer(SWA ~ timewindow * season + (1|reindeer), data=subset(df, timewindow== 3 & timepoint== "midnight" | timewindow== 4 & timepoint== "midnight" | timewindow== 2 & timepoint== "midnight"))
+anova(model1)
+
+
