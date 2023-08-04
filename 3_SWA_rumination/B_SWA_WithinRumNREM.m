@@ -70,22 +70,31 @@ ylim([0 2])
 line([0 700],[2 2],'Color','k')
 line([700 700],[0 2],'Color','k')
 
-% h2=figure
-%     
-% plot(nanmean(SWAcourse_perminute,1),'k')
-% % xlim([0 705/15])
-% % xticks([0 15 30 45])
-% % xticklabels({'0','15','30','45'})
-% xlabel('minutes of rumination')
-% ylabel('normalized SWA')
-% ylim([0 2])
-%        ax=gca;
-%        ax.XLabel.FontSize = 18;
-%        ax.YLabel.FontSize = 18;
+% prepare for plot to check which episodes were selected
+
+plot_rum=NaN([11 81900]);
+for n= 1:11
+    for t = 1: size(episodes(n).rumdura,1)
+        plot_rum(n,episodes(n).rumdura(t,2):episodes(n).rumdura(t,3))=1.2;
+    end
+end
+
+h2=figure
+    
+plot(nanmean(SWAcourse_perminute,1),'k')
+% xlim([0 705/15])
+% xticks([0 15 30 45])
+% xticklabels({'0','15','30','45'})
+xlabel('minutes of rumination')
+ylabel('normalized SWA')
+ylim([0 2])
+       ax=gca;
+       ax.XLabel.FontSize = 18;
+       ax.YLabel.FontSize = 18;
 
 %% SWA buildup and decrease within NREM sleep
 
-clearvars -except h2
+clearvars -except h2 plot_rum
 
 
 savepath='';
@@ -159,6 +168,14 @@ line([0 790],[2 2],'Color','k')
 line([790 790],[0 2],'Color','k')
 
 
+% prepare for plot to check which episodes were selected
+
+plot_nrem=NaN([11 81900]);
+for n= 1:11        
+    for t = 1: size(episodes(n).nremdura,1)
+        plot_nrem(n,episodes(n).nremdura(t,2):episodes(n).nremdura(t,3))=1.1;
+    end
+end
 
 % smoothed
 
@@ -184,24 +201,64 @@ line([790 790],[0 2],'Color','k')
 
 
 
-% h4=figure       
-% SWAcourse_perminute=squeeze(nanmean(reshape(SWAcourse,[],15,180),2));      
-% plot(nanmean(SWAcourse_perminute,1),'k')
-% % xlim([0 705/15])
-% % xticks([0 15 30 45])
-% % xticklabels({'0','15','30','45'})
-% xlabel('minutes of NREM sleep')
-% ylabel('SWA relative to baseline')
-% ylim([0 2])
-%        ax=gca;
-%        ax.XLabel.FontSize = 18;
-%        ax.YLabel.FontSize = 18;
+h4=figure       
+SWAcourse_perminute=squeeze(nanmean(reshape(SWAcourse,[],15,180),2));      
+plot(nanmean(SWAcourse_perminute,1),'k')
+% xlim([0 705/15])
+% xticks([0 15 30 45])
+% xticklabels({'0','15','30','45'})
+xlabel('minutes of NREM sleep')
+ylabel('SWA relative to baseline')
+ylim([0 2])
+       ax=gca;
+       ax.XLabel.FontSize = 18;
+       ax.YLabel.FontSize = 18;
 
 %% save
 
 cd('C:\Users\schlaf\Documents\reindeer\Data_Analysis_main_experiment\Results\SWA_rum')
 print(h2,'Fig3c.png','-dpng','-r1000')
 print(h3,'Fig3d.png','-dpng','-r1000')
+
+
+%% plot episodes that were used for this analysis
+
+close all
+
+for n= 1:11
+    
+        plot_nrem_vis=NaN([1 81900]);
+    plot_nrem_vis(find(STD_all(n).STD == 'n' | STD_all(n).STD == '2'))=1.1;
+    
+        plot_rum_vis=NaN([1 81900]);
+    plot_rum_vis(find(STD_all(n).STD == 't' | STD_all(n).STD == '4'))=1.2;
+    
+    
+    h1=figure('units','normalized','outerposition',[0 0 1 1])
+    for p=1:4
+    subplot(4,1,p)
+    
+ 
+    plot(plot_nrem(n,20475*p-20474:p*20475),'LineWidth',15,'Color',[0 0 1 0.5])
+    hold on
+    plot(plot_rum(n,20475*p-20474:p*20475),'LineWidth',15,'Color',[0 1 0 0.5])
+
+
+    plot(plot_nrem_vis(20475*p-20474:p*20475),'.-','LineWidth',10,'Color','k','MarkerSize',2)
+    hold on
+    plot(plot_rum_vis(20475*p-20474:p*20475),'.-','LineWidth',10,'Color','k','MarkerSize',2)      
+
+
+    xlim([0 20474])
+    
+    ylim([0.9 1.4])
+    yticks([1:0.1:1.4])
+    yticklabels({'REM ep.','NREMs ep.','Rum ep.','Wake ep.'})
+     
+
+    end
+
+end
 
 %% compare seasons
 % 

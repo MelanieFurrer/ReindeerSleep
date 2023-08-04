@@ -126,13 +126,13 @@ h1=figure('defaultAxesTickDir', 'out',  'defaultAxesTickDirMode', 'manual')
      yticks([0:1:3])
      xlim([0.8 2.2])
      xticks([1 2]);
-     xticklabels({'    before'+"\newline"+' rumination','     after'+"\newline"+'rumination'});
+     xticklabels({'    Before'+"\newline"+' rumination','     After'+"\newline"+'rumination'});
      ax=gca;
      ax.XAxis.FontSize = 18;
      ax.YAxis.FontSize = 16; 
      ax.YLabel.FontSize = 18;
     %title(num2str(p))
-      ylabel({'slow-wave activity' ; 'during NREM sleep'},'FontSize',18)
+      ylabel({'Slow-wave activity' ; 'during NREM sleep'},'FontSize',18)
       box off 
 line([0 2.2],[3.2 3.2],'Color','k')
 line([2.2 2.2],[0 3.2],'Color','k')
@@ -147,17 +147,17 @@ line([2.2 2.2],[0 3.2],'Color','k')
         %title(num2str(p))
         ylim([-2 1])
         yticks([-2:1:1])
-     set ( gca, 'ydir', 'reverse' )
-       ylabel({'{\Delta} slow-wave activity' ; '(after - before)'})
-       xlabel('rumination duration (min)')
+     %set ( gca, 'ydir', 'reverse' )
+       ylabel({'{\Delta} Slow-wave activity' ; '(after - before)'})
+       xlabel('Rumination duration (min)')
        ax=gca;
        ax.XAxis.FontSize = 16;
        ax.YAxis.FontSize = 16;             
        ax.XLabel.FontSize = 18;
        ax.YLabel.FontSize = 18;
        xlim([0 64])      
-line([0 64],[-2 -2],'Color','k')
-line([64 64],[1 -2],'Color','k')
+line([0 64],[1 1],'Color','k')
+line([64 64],[-2 1],'Color','k')
 
 %%%% find epochs with rum for modelling of process S %%%%%%%
 
