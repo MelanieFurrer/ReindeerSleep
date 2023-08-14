@@ -52,23 +52,34 @@ SWAcourse_perminute=squeeze(nanmean(reshape(SWAcourse,[],15,180),2));
 
 h2=figure('defaultAxesTickDir', 'out',  'defaultAxesTickDirMode', 'manual')
 
-subplot(1,1,1)
-plot(nanmean(SWAcourse,1),'k')
+
+p1=plot(nanmean(SWAcourse,1),'color',[0.2 0.2 0.2])
+
+
+hold on
+SWA_mean=nanmean(SWAcourse,1);
+SWA_nonan=SWA_mean(~isnan(SWA_mean));
+f=fit([1:length(SWA_nonan)]',SWA_nonan','poly2');
+p2=plot(f,'k')
+p2.LineWidth = 2;
+
 xlim([0 700])
 xticks([0 225 450 675])
 xticklabels({'0','15','30','45'})
-xlabel('minutes of rumination')
-ylabel({'slow-wave activity' ; 'during rumination'})
+xlabel('Minutes of rumination')
+ylabel({'Slow-wave activity' ; 'during rumination'})
 ylim([0 2])
        ax=gca;
        ax.XAxis.FontSize = 16;
        ax.YAxis.FontSize = 16;             
        ax.XLabel.FontSize = 18;
        ax.YLabel.FontSize = 18;
-
-       box off 
+       
+box off 
 line([0 700],[2 2],'Color','k')
 line([700 700],[0 2],'Color','k')
+legend('hide')       
+
 
 % prepare for plot to check which episodes were selected
 
@@ -79,18 +90,18 @@ for n= 1:11
     end
 end
 
-h2=figure
-    
-plot(nanmean(SWAcourse_perminute,1),'k')
-% xlim([0 705/15])
-% xticks([0 15 30 45])
-% xticklabels({'0','15','30','45'})
-xlabel('minutes of rumination')
-ylabel('normalized SWA')
-ylim([0 2])
-       ax=gca;
-       ax.XLabel.FontSize = 18;
-       ax.YLabel.FontSize = 18;
+% h2=figure
+%     
+% plot(nanmean(SWAcourse_perminute,1),'k')
+% % xlim([0 705/15])
+% % xticks([0 15 30 45])
+% % xticklabels({'0','15','30','45'})
+% xlabel('minutes of rumination')
+% ylabel('normalized SWA')
+% ylim([0 2])
+%        ax=gca;
+%        ax.XLabel.FontSize = 18;
+%        ax.YLabel.FontSize = 18;
 
 %% SWA buildup and decrease within NREM sleep
 
@@ -150,13 +161,21 @@ end
 
 h3=figure('defaultAxesTickDir', 'out',  'defaultAxesTickDirMode', 'manual')
 % scatter(1:size(SWAcourse,2),nanmean(SWAcourse),'k','MarkerFaceColor',[0.4 0.4 0.4])    
-subplot(1,1,1)
-plot(nanmean(SWAcourse,1),'k')
+p1=plot(nanmean(SWAcourse,1),'color',[0.2 0.2 0.2])
+
+hold on
+SWA_mean=nanmean(SWAcourse,1);
+SWA_nonan=SWA_mean(~isnan(SWA_mean));
+f=fit([1:length(SWA_nonan)]',SWA_nonan','poly2');
+p2=plot(f,'k')
+p2.LineWidth = 2;
+
+
 xlim([0 790])
 xticks([0 225 450 675 ])
 xticklabels({'0','15','30','45'})
-xlabel('minutes of NREM sleep')
-ylabel({'slow-wave activity' ; 'during NREM sleep'})
+xlabel('Minutes of NREM sleep')
+ylabel({'Slow-wave activity' ; 'during NREM sleep'})
 ylim([0 2])
        ax=gca;
        ax.XAxis.FontSize = 16;
@@ -167,6 +186,7 @@ box off
 line([0 790],[2 2],'Color','k')
 line([790 790],[0 2],'Color','k')
 
+legend('hide')
 
 % prepare for plot to check which episodes were selected
 
@@ -201,18 +221,18 @@ end
 
 
 
-h4=figure       
-SWAcourse_perminute=squeeze(nanmean(reshape(SWAcourse,[],15,180),2));      
-plot(nanmean(SWAcourse_perminute,1),'k')
-% xlim([0 705/15])
-% xticks([0 15 30 45])
-% xticklabels({'0','15','30','45'})
-xlabel('minutes of NREM sleep')
-ylabel('SWA relative to baseline')
-ylim([0 2])
-       ax=gca;
-       ax.XLabel.FontSize = 18;
-       ax.YLabel.FontSize = 18;
+% h4=figure       
+% SWAcourse_perminute=squeeze(nanmean(reshape(SWAcourse,[],15,180),2));      
+% plot(nanmean(SWAcourse_perminute,1),'k')
+% % xlim([0 705/15])
+% % xticks([0 15 30 45])
+% % xticklabels({'0','15','30','45'})
+% xlabel('minutes of NREM sleep')
+% ylabel('SWA relative to baseline')
+% ylim([0 2])
+%        ax=gca;
+%        ax.XLabel.FontSize = 18;
+%        ax.YLabel.FontSize = 18;
 
 %% save
 
