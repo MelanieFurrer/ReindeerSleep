@@ -103,7 +103,7 @@ SWA_after(nepochs_before<nrem_swa_min | nepochs_after<nrem_swa_min)=NaN;
 nepochs_before(nepochs_before<nrem_swa_min | nepochs_after<nrem_swa_min)=NaN;
 nepochs_after(nepochs_before<nrem_swa_min | nepochs_after<nrem_swa_min)=NaN;
 SWA_change = SWA_after - SWA_before;
-
+length_nrem(nepochs_before<nrem_swa_min | nepochs_after<nrem_swa_min)=NaN;
 
 %%%% plots %%%
 
