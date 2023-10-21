@@ -21,7 +21,15 @@ df$timewindow <- as.factor(df$timewindow)
 
 
 
-##### SWA increase and decrease separately #######
+
+gd <- df %>% 
+  group_by(interaction (season, timewindow)) %>% 
+  summarise(meanSWA = mean(SWA), seSWA = sd(SWA))
+gd$timewindow <- c(1,1,1,2,2,2,3,3,3,4,4,4)
+gd$season <- c('December','July','September','December','July','September','December','July','September','December','July','September')
+
+gd$timewindow <- as.factor(gd$timewindow)
+
 
 
 ##increase##
