@@ -90,18 +90,23 @@ for n=1:11
             SWA_decrease_SR(n,i)=nanmean(SWA_normalized(n,borders_2hcourse(n,i+1):borders_2hcourse(n,i+2)));
             vissymbsegment(i,:)=STD_all(n).STD(borders_2hcourse(n,i+1):borders_2hcourse(n,i+2));
             nrem_SR(n,i) = length(find(vissymbsegment(i,:)=='n' | vissymbsegment(i,:)=='2'))/15;
+            nrem_rum_SR(n,i) = length(find(vissymbsegment(i,:)=='n' | vissymbsegment(i,:)=='2' | vissymbsegment(i,:)=='t' | vissymbsegment(i,:)=='4'))/15;
         end
      
         for i=7:9
             SWA_decrease_SR(n,i)=nanmean(SWA_normalized(n,borders_2hcourse(n,i+2):borders_2hcourse(n,i+3)));
             vissymbsegment(i,:)=STD_all(n).STD(borders_2hcourse(n,i+2):borders_2hcourse(n,i+3));
             nrem_SR(n,i) = length(find(vissymbsegment(i,:)=='n' | vissymbsegment(i,:)=='2'))/15;
+            nrem_rum_SR(n,i) = length(find(vissymbsegment(i,:)=='n' | vissymbsegment(i,:)=='2' | vissymbsegment(i,:)=='t' | vissymbsegment(i,:)=='4'))/15;
+
         end
         
         for i=10:12
             SWA_decrease_SR(n,i)=nanmean(SWA_normalized(n,borders_2hcourse(n,i+3):borders_2hcourse(n,i+4)));
             vissymbsegment(i,:)=STD_all(n).STD(borders_2hcourse(n,i+3):borders_2hcourse(n,i+4));
             nrem_SR(n,i) = length(find(vissymbsegment(i,:)=='n' | vissymbsegment(i,:)=='2'))/15;
+            nrem_rum_SR(n,i) = length(find(vissymbsegment(i,:)=='n' | vissymbsegment(i,:)=='2' | vissymbsegment(i,:)=='t' | vissymbsegment(i,:)=='4'))/15;
+
         end
       
     else
@@ -110,24 +115,32 @@ for n=1:11
             SWA_decrease_SR(n,i)=nanmean(SWA_normalized(n,borders_2hcourse(n,i):borders_2hcourse(n,i+1)));
             vissymbsegment(i,:)=STD_all(n).STD(borders_2hcourse(n,i):borders_2hcourse(n,i+1));
             nrem_SR(n,i) = length(find(vissymbsegment(i,:)=='n' | vissymbsegment(i,:)=='2'))/15;
+            nrem_rum_SR(n,i) = length(find(vissymbsegment(i,:)=='n' | vissymbsegment(i,:)=='2' | vissymbsegment(i,:)=='t' | vissymbsegment(i,:)=='4'))/15;
+
         end
         
         for i=4:6
             SWA_decrease_SR(n,i)=nanmean(SWA_normalized(n,borders_2hcourse(n,i+1):borders_2hcourse(n,i+2)));
             vissymbsegment(i,:)=STD_all(n).STD(borders_2hcourse(n,i+1):borders_2hcourse(n,i+2));
             nrem_SR(n,i) = length(find(vissymbsegment(i,:)=='n' | vissymbsegment(i,:)=='2'))/15;
+            nrem_rum_SR(n,i) = length(find(vissymbsegment(i,:)=='n' | vissymbsegment(i,:)=='2' | vissymbsegment(i,:)=='t' | vissymbsegment(i,:)=='4'))/15;
+
         end
         
         for i=7:9
             SWA_decrease_SR(n,i)=nanmean(SWA_normalized(n,borders_2hcourse(n,i+2):borders_2hcourse(n,i+3)));
             vissymbsegment(i,:)=STD_all(n).STD(borders_2hcourse(n,i+2):borders_2hcourse(n,i+3));
             nrem_SR(n,i) = length(find(vissymbsegment(i,:)=='n' | vissymbsegment(i,:)=='2'))/15;
+            nrem_rum_SR(n,i) = length(find(vissymbsegment(i,:)=='n' | vissymbsegment(i,:)=='2' | vissymbsegment(i,:)=='t' | vissymbsegment(i,:)=='4'))/15;
+
         end
         
        for i=10:12
             SWA_decrease_SR(n,i)=nanmean(SWA_normalized(n,borders_2hcourse(n,i+3):borders_2hcourse(n,i+4)));
             vissymbsegment(i,:)=STD_all(n).STD(borders_2hcourse(n,i+3):borders_2hcourse(n,i+4));
             nrem_SR(n,i) = length(find(vissymbsegment(i,:)=='n' | vissymbsegment(i,:)=='2'))/15;
+            nrem_rum_SR(n,i) = length(find(vissymbsegment(i,:)=='n' | vissymbsegment(i,:)=='2' | vissymbsegment(i,:)=='t' | vissymbsegment(i,:)=='4'))/15;
+
         end
     
     end
@@ -143,6 +156,10 @@ SWA_R=reshape(SWA_decrease_SR(:,[3 4:6 9 10:12])',1,88)';
 %% rearrange for R (NREM before SD)
 
 NREM_R=reshape(nrem_SR(:,[1:3 7:9])',1,66)';
+
+%% rearrange for R (NREM&RUM before SD)
+
+NREM_rum_R=reshape(nrem_rum_SR(:,[1:3 7:9])',1,66)';
 
 
 

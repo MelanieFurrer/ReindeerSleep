@@ -21,7 +21,6 @@ df$timewindow <- as.factor(df$timewindow)
 
 
 
-
 gd <- df %>% 
   group_by(interaction (season, timewindow)) %>% 
   summarise(meanSWA = mean(SWA), seSWA = sd(SWA))
@@ -37,7 +36,6 @@ gd$timewindow <- as.factor(gd$timewindow)
 model1 <- lmer(SWA ~ timewindow * season + (1|timepoint) + (1|reindeer), data=subset(df, timewindow== 1 | timewindow== 2))
 anova(model1)
 summary(model1)
-
 
 
 ##decrease##
