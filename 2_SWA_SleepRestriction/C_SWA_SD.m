@@ -137,3 +137,12 @@ end
 %% rearrange for R (SWA after SR only)
 
 SWA_R=reshape(SWA_decrease_SR(:,[3 4:6 9 10:12])',1,88)';
+
+
+
+%% rearrange for R (NREM before SD)
+
+NREM_R=reshape(nrem_SR(:,[1:3 7:9])',1,66)';
+
+
+

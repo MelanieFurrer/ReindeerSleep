@@ -19,48 +19,6 @@ df$season <- as.factor(df$season)
 df$timepoint <- as.factor(df$timepoint)
 df$timewindow <- as.factor(df$timewindow)
 
-model0 <- lmer(SWA ~ timewindow * season * timepoint + (1|reindeer), df)
-anova(model0)
-
-model1 <- lmer(SWA ~ timewindow + (1|season) + (1|reindeer) + (1|timepoint), df)
-summary(model1)
-anova(model1)
-
-emmeans(model1, pairwise ~ timewindow, adjust = "tukey")
-
-
-model2 <- lmer(SWA ~ timewindow * season + (1|timepoint) + (1|reindeer), df)
-anova(model2)
-emmeans(model2, pairwise ~ timewindow, adjust = "tukey")
-
-
-gd <- df %>% 
-  group_by(interaction (season, timewindow)) %>% 
-  summarise(meanSWA = mean(SWA), seSWA = sd(SWA))
-gd$timewindow <- c(1,1,1,2,2,2,3,3,3,4,4,4)
-gd$season <- c('December','July','September','December','July','September','December','July','September','December','July','September')
-
-gd$timewindow <- as.factor(gd$timewindow)
-
-setwd("C:/Users/schlaf/Documents/reindeer/Data_Analysis_main_experiment/Results/SleepRestriction")
-tiff("SR_boxplot_meanseasonstimepoint_3h.png", units="in", width=6, height=4.8, res=300)
-
-ggplot(gd, aes(x=timewindow, y=meanSWA)) +
-  geom_point( aes(x=timewindow, y=meanSWA, color=season), size=4)+
-  geom_errorbar( aes(ymin=meanSWA-seSWA, ymax=meanSWA+seSWA, group=season, color=season), size=1, width = 0.1)+
-  geom_line(data=subset(gd, timewindow== 1 | timewindow== 2), aes(x=timewindow, y=meanSWA, group=season, color=season), size=1, linetype=2) +
-  geom_line(data=subset(gd, timewindow== 2 | timewindow== 3 | timewindow== 4), aes(x=timewindow, y=meanSWA, group=season, color=season), size=1, linetype=1) +
-  theme_bw()+
-  theme(text = element_text(size=20),axis.text.x = element_text(size=20),legend.position = "none")+
-  scale_x_discrete(labels= c("-2 to 0","0 to +2","+2 to +4", "+4 to +6"))+
-  xlab("hours from sleep deprivation")+
-  ylab("SWA relative to baseline")+
-  ylim(0.4, 2.2)+
-  scale_color_manual(values=c("#377eb8", "#4daf4a", "#ff7f00"))
-
-
-dev.off()
-
 
 
 ##### SWA increase and decrease separately #######
@@ -68,27 +26,13 @@ dev.off()
 
 ##increase##
 
-model0 <- lmer(SWA ~ timewindow * season * timepoint + (1|reindeer), data=subset(df, timewindow== 1 | timewindow== 2))
-summary(model0)
-anova(model0)
-
-emmeans(model0, pairwise ~ timewindow, adjust = "tukey")
-
 model1 <- lmer(SWA ~ timewindow * season + (1|timepoint) + (1|reindeer), data=subset(df, timewindow== 1 | timewindow== 2))
 anova(model1)
 summary(model1)
 
-c.emm <- emmeans(model1, ~ timewindow*season)
-contrast(c.emm, interaction = c("consec"), by = NULL)
-contrast(c.emm,ctrast); print(c.emm)
+
 
 ##decrease##
-
-model0 <- lmer(SWA ~ timewindow * season * timepoint + (1|reindeer), data=subset(df, timewindow== 2 | timewindow== 3 | timewindow== 4))
-summary(model0)
-anova(model0)
-
-emmeans(model0, pairwise ~ timewindow, adjust = "tukey")
 
 model2 <- lmer(SWA ~ timewindow * season + (1|timepoint) + (1|reindeer), data=subset(df, timewindow== 2 | timewindow== 3 | timewindow== 4))
 anova(model2)

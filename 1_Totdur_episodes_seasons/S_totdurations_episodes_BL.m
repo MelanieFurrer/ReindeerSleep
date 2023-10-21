@@ -90,7 +90,8 @@ summary(3,8)=std(length_wake(1,[3 6 8 11]));
 % [h,p] = ttest(length_nrem_rum(1,[1 4 9]),length_nrem_rum(1,[2 5 10]))
 
 %%  characteristics episodes
-cd('C:\Users\schlaf\Documents\reindeer\Data_Analysis_main_experiment\Results\episodes\BL2')
+cd('C:\Users\schlaf\Documents\GitHub\ReindeerSleep\data')
+
 load('episodes.mat')
 
 for n= 1:11
