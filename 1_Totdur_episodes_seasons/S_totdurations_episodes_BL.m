@@ -95,21 +95,21 @@ cd('C:\Users\schlaf\Documents\GitHub\ReindeerSleep\data')
 load('episodes.mat')
 
 for n= 1:11
-nreme(n,1)=length(episodes(n).nremdura(:,1))
-nreme(n,2)=mean(episodes(n).nremdura(:,1))./15
-nreme(n,3)=std(episodes(n).nremdura(:,1))./15
+nreme(n,1)=length(episodes(n).nremdura(:,1));
+nreme(n,2)=mean(episodes(n).nremdura(:,1))./15;
+nreme(n,3)=std(episodes(n).nremdura(:,1))./15;
 
-reme(n,1)=length(episodes(n).remdura(:,1))
-reme(n,2)=mean(episodes(n).remdura(:,1))./15
-reme(n,3)=std(episodes(n).remdura(:,1))./15
+reme(n,1)=length(episodes(n).remdura(:,1));
+reme(n,2)=mean(episodes(n).remdura(:,1))./15;
+reme(n,3)=std(episodes(n).remdura(:,1))./15;
 
-rume(n,1)=length(episodes(n).rumdura(:,1))
-rume(n,2)=mean(episodes(n).rumdura(:,1))./15
-rume(n,3)=std(episodes(n).rumdura(:,1))./15
+rume(n,1)=length(episodes(n).rumdura(:,1));
+rume(n,2)=mean(episodes(n).rumdura(:,1))./15;
+rume(n,3)=std(episodes(n).rumdura(:,1))./15;
 
-wake(n,1)=length(episodes(n).wakdura(:,1))
-wake(n,2)=mean(episodes(n).wakdura(:,1))./15
-wake(n,3)=std(episodes(n).wakdura(:,1))./15
+wake(n,1)=length(episodes(n).wakdura(:,1));
+wake(n,2)=mean(episodes(n).wakdura(:,1))./15;
+wake(n,3)=std(episodes(n).wakdura(:,1))./15;
 
 end
 

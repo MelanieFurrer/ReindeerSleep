@@ -15,7 +15,7 @@ library(plyr)
 library(patchwork)
 
 
-setwd("C:/Users/schlaf/Documents/GitHub/ReindeerSleep/Z_processS/docs")
+setwd("C:/Users/schlaf/Documents/GitHub/ReindeerSleep/4_processS/docs")
 
 df<-read.table("Stats&Params_BLnorm.txt",header=T)
 
@@ -26,53 +26,8 @@ df$x <- as.factor(df$x)
 
 
 
-p1 <- ggplot(df , aes(x=x, y=DeltaBIC_RumDec_Fix)) +
-  stat_boxplot(coef=4)+
-  geom_jitter(width=0,aes(size=meanRum))+
-  geom_point(aes(x=1,y=mean(DeltaBIC_RumDec_Fix*meanRum/mean(meanRum))),color="red",fill="red",size=5,shape=23)+ #plot weighed mean in red
-  theme_bw()+
-  theme(legend.position = "none")+
-  geom_abline(intercept = 0,linetype = "dashed")+
-  #ylab(expression(paste(Delta, " BIC ")))+
-  scale_y_continuous(breaks=c(-500,-400,-300,-300,-200,-100,0,100),limits=c(-560,110))+
-  xlab("")+
-  #scale_x_discrete(labels=c("RUM fix"))+
-  ylab("")
 
-
-p2 <- ggplot(df , aes(x=x, y=DeltaBIC_RumDec_Free)) +
-  stat_boxplot(coef=4)+
-  geom_jitter(width=0,aes(size=meanRum))+
-  geom_point(aes(x=1,y=mean(DeltaBIC_RumDec_Free*meanRum/mean(meanRum))),color="red",fill="red",size=5,shape=23)+ #plot weighed mean in red
-  theme_bw()+
-  theme(legend.position = "none")+
-  geom_abline(intercept = 0,linetype = "dashed")+
-  #ylab(expression(paste(Delta, " BIC ")))+
-  scale_y_continuous(breaks=c(-500,-400,-300,-300,-200,-100,0,100),limits=c(-560,110))+
-  xlab("")+
-  ylab("")
-
-
-
-p3 <- ggplot(df , aes(x=x, y=DeltaBIC_RumFree)) +
-  stat_boxplot(coef=4)+
-  geom_jitter(width=0,aes(size=meanRum))+
-  geom_point(aes(x=1,y=mean(DeltaBIC_RumFree*meanRum/mean(meanRum))),color="red",fill="red",size=5,shape=23)+ #plot weighed mean in red
-  theme_bw()+
-  geom_abline(intercept = 0,linetype = "dashed")+
-  #ylab(expression(paste(Delta, " BIC ")))+
-  scale_y_continuous(breaks=c(-500,-400,-300,-300,-200,-100,0,100),limits=c(-560,110))+
-  xlab("")+
-  ylab("")+
-  labs(size="tot. rumination (h)",fill="weighed mean")
-
-
-
-p1 + p3 & theme(text = element_text(size=22),axis.text.x = element_text(size=0,color="black"),axis.text.y = element_text(size=15))
-
-
-
-##### newplot paper #####
+##### plot paper #####
 
 
 setwd("C:/Users/schlaf/Documents/reindeer/Data_Analysis_main_experiment/Results/processS")
@@ -231,3 +186,51 @@ mean(median_SWA)
 
 
 
+
+
+###### old plots with model parameters free ##########
+
+
+p1 <- ggplot(df , aes(x=x, y=DeltaBIC_RumDec_Fix)) +
+  stat_boxplot(coef=4)+
+  geom_jitter(width=0,aes(size=meanRum))+
+  geom_point(aes(x=1,y=mean(DeltaBIC_RumDec_Fix*meanRum/mean(meanRum))),color="red",fill="red",size=5,shape=23)+ #plot weighed mean in red
+  theme_bw()+
+  theme(legend.position = "none")+
+  geom_abline(intercept = 0,linetype = "dashed")+
+  #ylab(expression(paste(Delta, " BIC ")))+
+  scale_y_continuous(breaks=c(-500,-400,-300,-300,-200,-100,0,100),limits=c(-560,110))+
+  xlab("")+
+  #scale_x_discrete(labels=c("RUM fix"))+
+  ylab("")
+
+
+p2 <- ggplot(df , aes(x=x, y=DeltaBIC_RumDec_Free)) +
+  stat_boxplot(coef=4)+
+  geom_jitter(width=0,aes(size=meanRum))+
+  geom_point(aes(x=1,y=mean(DeltaBIC_RumDec_Free*meanRum/mean(meanRum))),color="red",fill="red",size=5,shape=23)+ #plot weighed mean in red
+  theme_bw()+
+  theme(legend.position = "none")+
+  geom_abline(intercept = 0,linetype = "dashed")+
+  #ylab(expression(paste(Delta, " BIC ")))+
+  scale_y_continuous(breaks=c(-500,-400,-300,-300,-200,-100,0,100),limits=c(-560,110))+
+  xlab("")+
+  ylab("")
+
+
+
+p3 <- ggplot(df , aes(x=x, y=DeltaBIC_RumFree)) +
+  stat_boxplot(coef=4)+
+  geom_jitter(width=0,aes(size=meanRum))+
+  geom_point(aes(x=1,y=mean(DeltaBIC_RumFree*meanRum/mean(meanRum))),color="red",fill="red",size=5,shape=23)+ #plot weighed mean in red
+  theme_bw()+
+  geom_abline(intercept = 0,linetype = "dashed")+
+  #ylab(expression(paste(Delta, " BIC ")))+
+  scale_y_continuous(breaks=c(-500,-400,-300,-300,-200,-100,0,100),limits=c(-560,110))+
+  xlab("")+
+  ylab("")+
+  labs(size="tot. rumination (h)",fill="weighed mean")
+
+
+
+p1 + p3 & theme(text = element_text(size=22),axis.text.x = element_text(size=0,color="black"),axis.text.y = element_text(size=15))

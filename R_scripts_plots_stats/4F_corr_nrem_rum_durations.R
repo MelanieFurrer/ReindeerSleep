@@ -33,10 +33,7 @@ df2 <- df[ which(df$condition=='BL2' | df$condition=='SD'),]
 
 
 
-##### compare rum and nrem durations between SR and BL2 #########
 
-model1  <- lmer(nrem_dur ~ condition + (1|season)  + (1|reindeer),df2)
-summary(model1)
 
 
 ##### correlations rum-nrem durations BL2 #########
@@ -61,14 +58,25 @@ dev.off()
 
 model1  <- lmer(nrem_dur ~ rum_dur + (1|season),dfBL2)
 summary(model1)
-r.squaredGLMM(model1)
-
-cor.test(dfBL2$nrem_dur,dfBL2$rum_dur)
-
-#cor.test(dfBL2$nrem_dur,dfBL2$rum_dur)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+##### compare rum and nrem durations between SR and BL2 #########
+
+model1  <- lmer(nrem_dur ~ condition + (1|season)  + (1|reindeer),df2)
+summary(model1)
 
 ##### correlations rum-nrem durations sleep deprivation #########
 

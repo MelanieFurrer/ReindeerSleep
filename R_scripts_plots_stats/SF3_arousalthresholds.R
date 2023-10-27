@@ -5,7 +5,7 @@ library("readxl")
 library(ggplot2)
 library(patchwork)
 
-setwd("C:/Users/schlaf/Documents/reindeer/Data_Analysis_main_experiment/excel_overview_data")
+setwd("C:/Users/schlaf/Documents/GitHub/ReindeerSleep/data")
 
 
 df <- read_excel("arousals48.xlsx")
@@ -76,6 +76,11 @@ p3 <- ggplot(subset(df_counts_pooled, state=="w"),aes(reaction, percent)) +
         axis.ticks.length=unit(.15, "cm"), plot.title = element_text(size=26, face="bold",vjust = - 8, hjust = 0.02))
 
 p1 + p2 + p3
+
+
+
+
+
 
 
 
