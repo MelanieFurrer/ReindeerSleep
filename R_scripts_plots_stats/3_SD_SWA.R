@@ -102,6 +102,19 @@ dev.off()
 
 
 
+### compare pre and post SWA across seasons
+
+##pre SWA##
+
+model1 <- lmer(SWA ~ season + (1|timepoint) + (1|reindeer), data=subset(df, timewindow== 1))
+anova(model1)
+summary(model1)
+
+##post SWA##
+
+model1 <- lmer(SWA ~ season + (1|timepoint) + (1|reindeer), data=subset(df, timewindow== 2))
+anova(model1)
+summary(model1)
 
 
 
