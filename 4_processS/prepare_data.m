@@ -118,6 +118,8 @@ for i=1:nfiles
         SWA_normalized(i,:) = SWA_filled_normalized;
         STD_all(i,:)=STD;
         filenames{i}=filenames2(i).name(1:8);
+        SWA_BL_abs(i,:) = SWA_BL;
+        SWA_all_abs(i,:) = SWA_filled_012;
         
         clear powerEEG_pcut* artndxn_cut* artefactfreenr SWA SWA_filled* STD_0 STD_1 STD_2
         
