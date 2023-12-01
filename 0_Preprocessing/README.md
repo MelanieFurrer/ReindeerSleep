@@ -13,6 +13,7 @@ Output: files for scoring program (ascore, not commercially available) and.mat f
 2. Calculate power and artefact rejection, combine 12 hour files, temporally align data: "B_preprocessing.m"
 
 Input: .mat files (filtered and downsampled EEG data, 12 hours per file)
+
 Output:
 - .mat file with artefact-index and scoring-info including power values per epoch in 0.25 Hz resolution (approx. 91 hours per file, 1 file per reindeer in each season)
 - .mat file with artefact-index and scoring-info including pre-processed EEG data (approx. 91 hours per file, 1 file per reindeer in each season)
