@@ -7,6 +7,7 @@ These scripts were used to pre-process EEG data.
 -> filter 0.5 - 40 Hz, downsample to 128 Hz, re-reference for bipolar derivation and for EMG signal, calculate "NREM index" for scoring
 
 Input: .edf files (raw EEG data, 12 hours per file)
+
 Output: files for scoring program (ascore, not commercially available) and.mat files (12 hours per file)
 
 
