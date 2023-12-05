@@ -1,31 +1,31 @@
-# Preprocessing
+# Spindle and Slow Wave Detection
 
-These scripts were used to pre-process EEG data.  
-<br/><br/>   
+Spindle detection:  
         
-**A_create_scoring_file_withBipolarDerivation_resample.m:** Create files for scoring  
--> filter 0.5 - 40 Hz, downsample to 128 Hz, re-reference for bipolar derivation and for EMG signal, calculate "NREM index" for scoring  
+**A1_spindle_detect_BP.m:** Detect Spindles  
+Input:  .mat file with pre-processed EEG data, artefact and scoring info
+Output: .mat file with spindle info  
 
-Input:
-- .edf files (raw EEG data, 12 hours per file)  
+**A2_findepochs_highSD_nrem.m:** Find NREM-Sleep epochs with high spindle density  
+Input: spindle info, artefact info, EEG data prepared for cross-frequency coupling (20s epochs of NREM sleep with 4 sec overlap)  
+Output: EEG data prepared for cross-frequency coupling (20s epochs of NREM sleep with 4 sec overlap). Only epochs with more than X spindles per minute.  
 
-Output:
-- files used for scoring program
-- .mat files (filtered and downsampled EEG data, 12 hours per file)  
-          
+**A2_findepochs_highSD_rum.m:** same as "A2_findepochs_highSD_nrem.m", but for rumination epochs  
+     
 <br/><br/>          
-**B_preprocessing.m:** Calculate power and do semi-automatic artefact rejection, combine 12 hour files, temporally align data  
+Slow-Wave Detection:  
 
-Input:
-- .mat files (filtered and downsampled EEG data, 12 hours per file)
+**B0_filterdata_for_swdetect.m:** Filter Data for slow-wave detection  (e.g. 0.5 - 4 Hz)  
+Input: .mat file with pre-processed EEG data, artefact and scoring info  
+Output: .mat file with filtered EEG data for slow-wave detection, artefact and scoring info   
+**B1_ToDoSwdetect.m:** Run slow-wave detection
+Input: .mat file with filtered EEG data for slow-wave detection, artefact and scoring info  
+Output: .mat file with filtered EEG data, artefact and scoring info and slow-wave detection info  
 
-Output:
-- .mat files with artefact-index and scoring-info including power values per epoch in 0.25 Hz resolution (3 files per reindeer in each season)
-- .mat files with artefact-index and scoring-info including pre-processed EEG data (3 files per reindeer in each season)
 
+<br/><br/>          
+Illustrative Plot for Supplementary Figure:
 
-<br/><br/>      
-**A2_create_matfile_filter0145_resample256** and **B2_preprocessing_filter0145_resample256**: Pre-processing for slow-wave detection, spindle detection and cross-frequency coupling  
-
-<br/><br/>  
-**B3_artreject_rum**: Calculate power and do semi-automatic artefact rejection for rumination epochs (used for SWA decrease during rumination analysis)
+**S_plotsignal.m**  
+Input: Pre-Processed EEG data, EEG data filtered for slow-wave detection, slow-wave detection info, spindle detection info (with filtered signal used for detection)  
+Output: Illustrative plot
