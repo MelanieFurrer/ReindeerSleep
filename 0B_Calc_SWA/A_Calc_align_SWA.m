@@ -185,56 +185,56 @@ end
 
        
 %% save file where only SWA during sleep episodes with rum are included %%
-
-savepath='C:\Users\schlaf\Documents\reindeer\Data_Analysis_main_experiment\Results\SWA_normalized_aligned\';
-cd(savepath)
-load('SWA_scoring_episodes_43hnorm.mat')
-load('episodes_sleep_rum.mat')
-
-
-epiok=zeros(1,81900);
-for n=1:11
-
-episodes_sleep_rum_n=episodes_sleep_rum(episodes_sleep_rum(:,1)==n,2:3);
-
-    for e=1:size(episodes_sleep_rum_n,1)
-        epiok(episodes_sleep_rum_n(e,1):episodes_sleep_rum_n(e,2))=1;        
-    end
-    
-SWA_normalized(n,find(epiok~=1))=NaN;
-
-end    
-    
-%%%% save 
-cd(savepath)
-save('SWA_scoring_episodes_43hnorm_sleepepi_rum','SWA_normalized','SWA_absolute','scoring','filenames','episodes')
-close all  
-clear    
-
-
-%% save files with only SWA during light period or dark period (september) %%
-
-savepath='C:\Users\schlaf\Documents\reindeer\Data_Analysis_main_experiment\Results\SWA_normalized_aligned\';
-cd(savepath)
-load('SWA_scoring_episodes.mat')
-
-
-light=zeros(1,81900);
-
-light([1:6300 13501:27900 35101:49500 56701:71100 78301:end])=1;     
-
-%%%% light  
-SWA_normalized(:,find(light~=1))=NaN;
-save('SWA_scoring_episodes_light','SWA_normalized','SWA_absolute','scoring','filenames','episodes')
-
-load('SWA_scoring_episodes.mat')
-
-%%%% dark
-SWA_normalized(:,find(light==1))=NaN;
-
-cd(savepath)
-save('SWA_scoring_episodes_dark','SWA_normalized','SWA_absolute','scoring','filenames','episodes')
-close all  
-clear    
+% 
+% savepath='C:\Users\schlaf\Documents\reindeer\Data_Analysis_main_experiment\Results\SWA_normalized_aligned\';
+% cd(savepath)
+% load('SWA_scoring_episodes_43hnorm.mat')
+% load('episodes_sleep_rum.mat')
+% 
+% 
+% epiok=zeros(1,81900);
+% for n=1:11
+% 
+% episodes_sleep_rum_n=episodes_sleep_rum(episodes_sleep_rum(:,1)==n,2:3);
+% 
+%     for e=1:size(episodes_sleep_rum_n,1)
+%         epiok(episodes_sleep_rum_n(e,1):episodes_sleep_rum_n(e,2))=1;        
+%     end
+%     
+% SWA_normalized(n,find(epiok~=1))=NaN;
+% 
+% end    
+%     
+% %%%% save 
+% cd(savepath)
+% save('SWA_scoring_episodes_43hnorm_sleepepi_rum','SWA_normalized','SWA_absolute','scoring','filenames','episodes')
+% close all  
+% clear    
+% 
+% 
+% %% save files with only SWA during light period or dark period (september) %%
+% 
+% savepath='C:\Users\schlaf\Documents\reindeer\Data_Analysis_main_experiment\Results\SWA_normalized_aligned\';
+% cd(savepath)
+% load('SWA_scoring_episodes.mat')
+% 
+% 
+% light=zeros(1,81900);
+% 
+% light([1:6300 13501:27900 35101:49500 56701:71100 78301:end])=1;     
+% 
+% %%%% light  
+% SWA_normalized(:,find(light~=1))=NaN;
+% save('SWA_scoring_episodes_light','SWA_normalized','SWA_absolute','scoring','filenames','episodes')
+% 
+% load('SWA_scoring_episodes.mat')
+% 
+% %%%% dark
+% SWA_normalized(:,find(light==1))=NaN;
+% 
+% cd(savepath)
+% save('SWA_scoring_episodes_dark','SWA_normalized','SWA_absolute','scoring','filenames','episodes')
+% close all  
+% clear    
 
 
