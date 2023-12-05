@@ -5,5 +5,5 @@
 
 **A_Calc_align_SWA.m:**  SWA during NREM sleep
 
-**A_Calc_align_SWA.m:** SWA during rumination
+**A_Calc_align_SWA_rum.m:** SWA during rumination
 
