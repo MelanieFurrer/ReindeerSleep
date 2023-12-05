@@ -18,7 +18,7 @@ load(filenames(s,1).name)
 
 %%% filter
 locutoff=0.5;
-hicutoff=1.5;
+hicutoff=4;
 
 data=vertcat(EEG_dcut,BP_dcut);
 
@@ -36,7 +36,7 @@ data=vertcat(EEG_dcut,BP_dcut);
     EEG.chanlocs=[];
 
 cd(savepath)
-save([num2str(filenames(s,1).name(1:end-4)),'_filtered_05_1_55Hz'],'EEG',...
+save([num2str(filenames(s,1).name(1:end-4)),'_filtered_05_4Hz'],'EEG',...
     'artndxn_cut','artndxn_rum','fs','vissymb_cut')
 
 clearvars -except *path savepath filenames
