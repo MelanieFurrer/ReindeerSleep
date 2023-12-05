@@ -3,7 +3,7 @@
 Spindle detection:  
         
 **A1_spindle_detect_BP.m:** Detect Spindles  
-Input:  .mat file with pre-processed EEG data, artefact and scoring info
+Input:  .mat file with pre-processed EEG data, artefact and scoring info  
 Output: .mat file with spindle info  
 
 **A2_findepochs_highSD_nrem.m:** Find NREM-Sleep epochs with high spindle density  
@@ -18,13 +18,13 @@ Slow-Wave Detection:
 **B0_filterdata_for_swdetect.m:** Filter Data for slow-wave detection  (e.g. 0.5 - 4 Hz)  
 Input: .mat file with pre-processed EEG data, artefact and scoring info  
 Output: .mat file with filtered EEG data for slow-wave detection, artefact and scoring info   
-**B1_ToDoSwdetect.m:** Run slow-wave detection
+**B1_ToDoSwdetect.m:** Run slow-wave detection  
 Input: .mat file with filtered EEG data for slow-wave detection, artefact and scoring info  
 Output: .mat file with filtered EEG data, artefact and scoring info and slow-wave detection info  
 
 
 <br/><br/>          
-Illustrative Plot for Supplementary Figure:
+Illustrative Plot for Supplementary Figure:  
 
 **S_plotsignal.m**  
 Input: Pre-Processed EEG data, EEG data filtered for slow-wave detection, slow-wave detection info, spindle detection info (with filtered signal used for detection)  
