@@ -22,3 +22,10 @@ Input:
 Output:
 - .mat files with artefact-index and scoring-info including power values per epoch in 0.25 Hz resolution (3 files per reindeer in each season)
 - .mat files with artefact-index and scoring-info including pre-processed EEG data (3 files per reindeer in each season)
+
+
+<br/><br/>      
+**A2_create_matfile_filter0145_resample256** and **B2_preprocessing_filter0145_resample256**: Pre-processing for slow-wave detection, spindle detection and cross-frequency coupling  
+
+<br/><br/>  
+**B3_artreject_rum**: Calculate power and do semi-automatic artefact rejection for rumination epochs (used for SWA decrease during rumination analysis)
