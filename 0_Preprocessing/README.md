@@ -3,7 +3,7 @@
 These scripts were used to pre-process EEG data.  
 <br/><br/>   
         
-**A2_create_scoring_file_withBipolarDerivation_resample.m:** Create files for scoring  
+**A_create_scoring_file_withBipolarDerivation_resample.m:** Create files for scoring  
 -> filter 0.5 - 40 Hz, downsample to 128 Hz, re-reference for bipolar derivation and for EMG signal, calculate "NREM index" for scoring  
 
 Input:
