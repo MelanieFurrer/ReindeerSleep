@@ -1,4 +1,4 @@
-# Compare behavioral rhythms, vigilance-stage distribution, episodes and transitions across seasons
+# Compare behavioral rhythms, vigilance-state distribution, episodes and transitions across seasons
         
 **F2_12hDiff_behavioralrhythms.m**   
 Input: .mat files with scoring-info (plus artefact-index and  power values per epoch)  
