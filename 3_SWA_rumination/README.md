@@ -1,4 +1,4 @@
-# Compare behavioral rhythms, vigilance-stage distribution, episodes and transitions across seasons
+# Calculate change of SWA across and within NREM sleep and rumination episoded
         
 **F4AB_SWA_AcrossRum.m**   
 Input: .mat file with normalized and absolute SWA, scoring and episode info; .mat file with episode info  
