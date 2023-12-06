@@ -1,11 +1,11 @@
-# Prepare data for modelling of Process S and plot illustrative example of modelling results
+# Process S Modelling
         
-**prepare_data.m** -> same as **A_Calc_align_SWA**  
-Input: .mat files with artefact-index and scoring-info including power values per epoch in 0.25 Hz resolution (3 files per reindeer in each season)   
-Output:  .mat file with normalized and absolute SWA, scoring and episode info. One file for all recordings.   
+**ProcessData.Rmd**   
+Input: .mat file with normalized and absolute SWA, scoring and episode info. One file for all recordings.   
+Output: Data processed for modelling  
 
 
-**example_processS_SWA_hypnogram.m**    
-Input: output Process S modeling, episode and scoring info  
-Output: Illustrative Figure (Supplementary Figure 4A)  
+**Fit_Reindeer_061022.Rmd**     
+Input: Data processed for modelling   
+Output: Results from modelling of Process S (parameters, fitted results, simulation)  
 
