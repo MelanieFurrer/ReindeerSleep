@@ -1,15 +1,4 @@
-# Compare behavioral rhythms, vigilance-stage distribution, episodes and transitions across seasons
-        
-**F2_12hDiff_behavioralrhythms.m**   
-Input: .mat files with scoring-info (plus artefact-index and  power values per epoch)  
-Output: Figure 2  
+# Calculate SWA for 2-hour time windows before and after sleep deprivation  
 
-
-**TS2_totdurations_episodes_BL.m**  
-Input: .mat files with scoring-info (plus artefact-index and  power values per epoch); .mat file with episode info (start, end and length of each episode)  
-Output: Table S2   
-
-
-**TS3_Transitions.m**   
-Input:  .mat file with episode info (start, end and length of each episode), scoring info and artefact info  
-Output: Table S3  
+**Input:** .mat file with normalized and absolute SWA, scoring and episode info; .mat file with episode info  
+**Output:** SWA for 2-hour time windows before and after sleep deprivation (input for statistics and plotting in R)  
