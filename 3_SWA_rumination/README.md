@@ -1,15 +1,11 @@
 # Compare behavioral rhythms, vigilance-stage distribution, episodes and transitions across seasons
         
-**F2_12hDiff_behavioralrhythms.m**   
-Input: .mat files with scoring-info (plus artefact-index and  power values per epoch)  
-Output: Figure 2  
+**F4AB_SWA_AcrossRum.m**   
+Input: .mat file with normalized and absolute SWA, scoring and episode info; .mat file with episode info  
+Output: Figure 4AB  
 
 
-**TS2_totdurations_episodes_BL.m**  
-Input: .mat files with scoring-info (plus artefact-index and  power values per epoch); .mat file with episode info (start, end and length of each episode)  
-Output: Table S2   
+**F4CD_SWA_WithinRumNREM.m**  
+Input: .mat file with normalized and absolute SWA, scoring and episode info; .mat file with episode info   
+Output: Figure 4CD 
 
-
-**TS3_Transitions.m**   
-Input:  .mat file with episode info (start, end and length of each episode), scoring info and artefact info  
-Output: Table S3  
